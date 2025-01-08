@@ -2,6 +2,7 @@ package com.sergio.bank.service;
 
 import com.sergio.bank.dto.AccountDTO;
 import com.sergio.bank.dto.CustomerDTO;
+import com.sergio.bank.exception.BadRequestException;
 import com.sergio.bank.exception.CustomerNotFoundException;
 import com.sergio.bank.mapper.AccountMapper;
 import com.sergio.bank.mapper.CustomerMapper;
@@ -9,7 +10,6 @@ import com.sergio.bank.model.Customer;
 import com.sergio.bank.repository.AccountRepository;
 import com.sergio.bank.repository.CustomerRepository;
 import jakarta.transaction.Transactional;
-import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
