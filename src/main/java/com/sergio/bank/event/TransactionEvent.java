@@ -11,9 +11,6 @@ public class TransactionEvent {
     private Long destinationAccountId;
     private String status;
 
-    public TransactionEvent() {
-    }
-
     public TransactionEvent(String type, LocalDateTime timestamp, BigDecimal amount, Long sourceAccountId, Long destinationAccountId, String status) {
         this.type = type;
         this.timestamp = timestamp;

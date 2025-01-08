@@ -29,8 +29,6 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponseDto> login(@RequestBody LoginDto dto) {
-        UsernamePasswordAuthenticationToken login = new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getPass());
-        Authentication authentication = this.authenticationManager.authenticate(login);
         String jwt = this.jwtUtil.create(dto.getEmail());
         Customer customer = personaRepository.findByEmail(dto.getEmail())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
