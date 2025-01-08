@@ -1,6 +1,7 @@
 package com.sergio.bank.strategy;
 
 import com.sergio.bank.model.Account;
+import com.sergio.bank.util.MessageConstants;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -16,7 +17,7 @@ public class TransactionContext {
 
     public void executeTransaction(Account source, Account destination, BigDecimal amount) {
         if (transactionStrategy == null) {
-            throw new IllegalStateException("Transaction strategy not set");
+            throw new IllegalStateException(MessageConstants.ERROR_STRATEGY);
         }
         transactionStrategy.execute(source, destination, amount);
     }

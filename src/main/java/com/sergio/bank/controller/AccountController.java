@@ -2,7 +2,7 @@ package com.sergio.bank.controller;
 
 import com.sergio.bank.dto.AccountDTO;
 import com.sergio.bank.dto.TransactionDTO;
-import com.sergio.bank.service.AccountService;
+import com.sergio.bank.service.impl.AccountServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,8 +10,12 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/accounts")
 public class AccountController {
-    @Autowired
-    private AccountService accountService;
+
+    private final AccountServiceImpl accountService;
+
+    public AccountController(AccountServiceImpl accountService) {
+        this.accountService = accountService;
+    }
 
     @PostMapping
     public ResponseEntity<AccountDTO> createAccount(@RequestBody AccountDTO accountDTO) {

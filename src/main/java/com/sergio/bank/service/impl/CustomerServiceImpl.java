@@ -1,4 +1,4 @@
-package com.sergio.bank.service;
+package com.sergio.bank.service.impl;
 
 import com.sergio.bank.dto.AccountDTO;
 import com.sergio.bank.dto.CustomerDTO;
@@ -6,9 +6,12 @@ import com.sergio.bank.exception.BadRequestException;
 import com.sergio.bank.exception.CustomerNotFoundException;
 import com.sergio.bank.mapper.AccountMapper;
 import com.sergio.bank.mapper.CustomerMapper;
+import com.sergio.bank.model.Account;
 import com.sergio.bank.model.Customer;
 import com.sergio.bank.repository.AccountRepository;
 import com.sergio.bank.repository.CustomerRepository;
+import com.sergio.bank.service.CustomerService;
+import com.sergio.bank.util.MessageConstants;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,7 +22,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional
-public class CustomerServiceImpl {
+public class CustomerServiceImpl implements CustomerService {
     @Autowired
     private CustomerMapper customerMapper;
 
@@ -40,7 +43,7 @@ public class CustomerServiceImpl {
 
     public CustomerDTO createCustomer(CustomerDTO customerDTO) throws BadRequestException {
         if (customerRepository.findByEmail(customerDTO.getEmail()).isPresent()) {
-            throw new BadRequestException("El correo electrónico ya está registrado");
+            throw new BadRequestException(MessageConstants.ERROR_EXIST_EMAIL);
         }
         Customer customer = customerMapper.toEntity(customerDTO);
         String encodedPassword = passwordEncoder.encode(customer.getPassword());
@@ -60,5 +63,42 @@ public class CustomerServiceImpl {
                 .stream()
                 .map(accountMapper::toDTO)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public void deleteCustomer(Long id) throws CustomerNotFoundException {
+        Customer customer = customerRepository.findById(id)
+                .orElseThrow(() -> new CustomerNotFoundException(id));
+
+        List<Account> accounts = accountRepository.findByCustomerId(id);
+        accountRepository.deleteAll(accounts);
+        customerRepository.delete(customer);
+    }
+
+    @Override
+    public CustomerDTO updateCustomer(Long id, CustomerDTO customerDTO) throws CustomerNotFoundException, BadRequestException {
+        Customer existingCustomer = findCustomerById(id);
+        validateEmail(customerDTO.getEmail(), existingCustomer);
+        customerMapper.updateEntityFromDto(customerDTO, existingCustomer);
+        if (customerDTO.getPassword() != null && !customerDTO.getPassword().isEmpty()) {
+            existingCustomer.setPassword(passwordEncoder.encode(customerDTO.getPassword()));
+        }
+        return saveAndReturnCustomer(existingCustomer);
+    }
+
+    private Customer findCustomerById(Long id) throws CustomerNotFoundException {
+        return customerRepository.findById(id)
+                .orElseThrow(() -> new CustomerNotFoundException(id));
+    }
+
+    private void validateEmail(String email, Customer existingCustomer) throws BadRequestException {
+        if (!existingCustomer.getEmail().equals(email) && customerRepository.findByEmail(email).isPresent()) {
+            throw new BadRequestException(MessageConstants.ERROR_EXIST_EMAIL);
+        }
+    }
+
+    private CustomerDTO saveAndReturnCustomer(Customer existingCustomer) {
+        Customer updatedCustomer = customerRepository.save(existingCustomer);
+        return customerMapper.toDTO(updatedCustomer);
     }
 }

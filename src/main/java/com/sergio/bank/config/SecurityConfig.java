@@ -49,7 +49,7 @@ public class SecurityConfig {
                         .ignoringRequestMatchers("/api/auth/**", "/api/**","/h2-console/**")
                 )
                 .headers(headers -> headers
-                        .frameOptions().disable() // Permitir uso de frames
+                        .frameOptions().disable()
                 )
                 .addFilterBefore(jwtFilter, BasicAuthenticationFilter.class)
                 .build();
