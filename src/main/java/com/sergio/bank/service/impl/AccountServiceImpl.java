@@ -1,4 +1,4 @@
-package com.sergio.bank.service;
+package com.sergio.bank.service.impl;
 
 import com.sergio.bank.dto.AccountDTO;
 import com.sergio.bank.event.TransactionEvent;
@@ -10,11 +10,11 @@ import com.sergio.bank.model.Account;
 import com.sergio.bank.model.Customer;
 import com.sergio.bank.observer.TransactionObserver;
 import com.sergio.bank.repository.AccountRepository;
-import com.sergio.bank.service.impl.CustomerServiceImpl;
 import com.sergio.bank.strategy.TransactionContext;
 import com.sergio.bank.strategy.impl.DepositStrategy;
 import com.sergio.bank.strategy.impl.TransferStrategy;
 import com.sergio.bank.strategy.impl.WithdrawalStrategy;
+import com.sergio.bank.util.MessageConstants;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,7 +27,7 @@ import java.util.List;
 
 @Service
 @Transactional
-public class AccountService {
+public class AccountServiceImpl {
     @Autowired
     private AccountRepository accountRepository;
 
@@ -48,7 +48,7 @@ public class AccountService {
 
     private final List<TransactionObserver> observers = new ArrayList<>();
 
-    public AccountService(AccountRepository accountRepository, AccountFactory accountFactory, CustomerMapper customerMapper, AccountMapper accountMapper, CustomerServiceImpl customerService, TransactionContext transactionContext) {
+    public AccountServiceImpl(AccountRepository accountRepository, AccountFactory accountFactory, CustomerMapper customerMapper, AccountMapper accountMapper, CustomerServiceImpl customerService, TransactionContext transactionContext) {
         this.accountRepository = accountRepository;
         this.accountFactory = accountFactory;
         this.customerMapper = customerMapper;
@@ -83,17 +83,17 @@ public class AccountService {
     @Transactional
     public void performTransaction(String transactionType, Account source, Account destination, BigDecimal amount) {
         switch (transactionType.toUpperCase()) {
-            case "TRANSFER":
+            case MessageConstants.TRANSACTION_TYPE_TRANSFER:
                 transactionContext.setTransactionStrategy(new TransferStrategy());
                 break;
-            case "DEPOSIT":
+            case MessageConstants.TRANSACTION_TYPE_DEPOSIT:
                 transactionContext.setTransactionStrategy(new DepositStrategy());
                 break;
-            case "WITHDRAWAL":
+            case MessageConstants.TRANSACTION_TYPE_WITHDRAWAL:
                 transactionContext.setTransactionStrategy(new WithdrawalStrategy());
                 break;
             default:
-                throw new IllegalArgumentException("Unsupported transaction type");
+                throw new IllegalArgumentException(MessageConstants.ERROR_UNSUPPORTED_TRANSACTION_TYPE);
         }
 
         transactionContext.executeTransaction(source, destination, amount);
@@ -106,12 +106,12 @@ public class AccountService {
         }
 
         TransactionEvent event = new TransactionEvent(
-                "TRANSFER",
+                MessageConstants.TRANSACTION_TYPE_TRANSFER,
                 LocalDateTime.now(),
                 amount,
                 source != null ? source.getId() : null,
                 destination != null ? destination.getId() : null,
-                "SUCCESS"
+                MessageConstants.TRANSACTION_STATUS_SUCCESS
         );
         notifyObservers(event);
     }
