@@ -10,6 +10,7 @@ import com.sergio.bank.model.Account;
 import com.sergio.bank.model.Customer;
 import com.sergio.bank.observer.TransactionObserver;
 import com.sergio.bank.repository.AccountRepository;
+import com.sergio.bank.service.impl.CustomerServiceImpl;
 import com.sergio.bank.strategy.TransactionContext;
 import com.sergio.bank.strategy.impl.DepositStrategy;
 import com.sergio.bank.strategy.impl.TransferStrategy;
@@ -40,14 +41,14 @@ public class AccountService {
     private CustomerMapper customerMapper;
 
     @Autowired
-    private CustomerService customerService;
+    private CustomerServiceImpl customerService;
 
     @Autowired
     private final TransactionContext transactionContext;
 
     private final List<TransactionObserver> observers = new ArrayList<>();
 
-    public AccountService(AccountRepository accountRepository, AccountFactory accountFactory, CustomerMapper customerMapper, AccountMapper accountMapper, CustomerService customerService, TransactionContext transactionContext) {
+    public AccountService(AccountRepository accountRepository, AccountFactory accountFactory, CustomerMapper customerMapper, AccountMapper accountMapper, CustomerServiceImpl customerService, TransactionContext transactionContext) {
         this.accountRepository = accountRepository;
         this.accountFactory = accountFactory;
         this.customerMapper = customerMapper;
