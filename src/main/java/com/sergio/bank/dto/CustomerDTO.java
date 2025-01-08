@@ -6,6 +6,7 @@ public class CustomerDTO {
     private String name;
     private String email;
     private String documentNumber;
+    private String password;
 
     public Long getId() {
         return id;
@@ -37,5 +38,13 @@ public class CustomerDTO {
 
     public void setDocumentNumber(String documentNumber) {
         this.documentNumber = documentNumber;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

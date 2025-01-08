@@ -23,9 +23,14 @@ public class AccountController {
         return ResponseEntity.ok(accountService.getAccount(id));
     }
 
-    @PostMapping("/transfer")
-    public ResponseEntity<Void> transfer(@RequestBody TransactionDTO transactionDTO) {
-        //accountService.transfer(transactionDTO);
+    @PostMapping("/transaction")
+    public ResponseEntity<Void> performTransaction(@RequestBody TransactionDTO transactionDTO) {
+        /*accountService.performTransaction(
+                transactionDTO.getTransactionType(), // Tipo de transacción (TRANSFER, DEPOSIT, WITHDRAWAL)
+                transactionDTO.getSourceAccountId(),
+                transactionDTO.getDestinationAccountId(),
+                transactionDTO.getAmount()
+        );*/
         return ResponseEntity.ok().build();
     }
 }

@@ -20,6 +20,9 @@ public class Customer {
     @Column(name = "document_number", unique = true, nullable = false)
     private String documentNumber;
 
+    @Column(name = "password")
+    private String password;
+
     @OneToMany(mappedBy = "customer")
     private List<Account> accounts;
 
@@ -61,5 +64,13 @@ public class Customer {
 
     public void setAccounts(List<Account> accounts) {
         this.accounts = accounts;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

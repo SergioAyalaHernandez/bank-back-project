@@ -1,8 +1,7 @@
 package com.sergio.bank.service;
 
-import com.sergio.bank.command.TransactionCommand;
-import com.sergio.bank.command.TransferCommand;
 import com.sergio.bank.dto.AccountDTO;
+import com.sergio.bank.event.TransactionEvent;
 import com.sergio.bank.exception.AccountNotFoundException;
 import com.sergio.bank.factory.AccountFactory;
 import com.sergio.bank.mapper.AccountMapper;
@@ -11,12 +10,18 @@ import com.sergio.bank.model.Account;
 import com.sergio.bank.model.Customer;
 import com.sergio.bank.observer.TransactionObserver;
 import com.sergio.bank.repository.AccountRepository;
-import com.sergio.bank.strategy.TransactionStrategy;
+import com.sergio.bank.strategy.TransactionContext;
+import com.sergio.bank.strategy.impl.DepositStrategy;
+import com.sergio.bank.strategy.impl.TransferStrategy;
+import com.sergio.bank.strategy.impl.WithdrawalStrategy;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -38,14 +43,27 @@ public class AccountService {
     private CustomerService customerService;
 
     @Autowired
-    private List<TransactionObserver> transactionObservers;
+    private final TransactionContext transactionContext;
 
-    public AccountService(AccountRepository accountRepository, AccountFactory accountFactory, CustomerMapper customerMapper, AccountMapper accountMapper, CustomerService customerService) {
+    private final List<TransactionObserver> observers = new ArrayList<>();
+
+    public AccountService(AccountRepository accountRepository, AccountFactory accountFactory, CustomerMapper customerMapper, AccountMapper accountMapper, CustomerService customerService, TransactionContext transactionContext) {
         this.accountRepository = accountRepository;
         this.accountFactory = accountFactory;
         this.customerMapper = customerMapper;
         this.accountMapper = accountMapper;
         this.customerService = customerService;
+        this.transactionContext = transactionContext;
+    }
+
+    public void registerObserver(TransactionObserver observer) {
+        observers.add(observer);
+    }
+
+    public void notifyObservers(TransactionEvent event) {
+        for (TransactionObserver observer : observers) {
+            observer.onTransactionCompleted(event);
+        }
     }
 
     public AccountDTO createAccount(AccountDTO accountDTO) {
@@ -61,22 +79,39 @@ public class AccountService {
                 .orElseThrow(() -> new AccountNotFoundException(id));
     }
 
-    public void transfer(Long sourceId, Long destinationId, BigDecimal amount) {
-        Account sourceAccount = accountRepository.findById(sourceId)
-                .orElseThrow(() -> new AccountNotFoundException(sourceId));
-        Account destinationAccount = accountRepository.findById(destinationId)
-                .orElseThrow(() -> new AccountNotFoundException(destinationId));
+    @Transactional
+    public void performTransaction(String transactionType, Account source, Account destination, BigDecimal amount) {
+        switch (transactionType.toUpperCase()) {
+            case "TRANSFER":
+                transactionContext.setTransactionStrategy(new TransferStrategy());
+                break;
+            case "DEPOSIT":
+                transactionContext.setTransactionStrategy(new DepositStrategy());
+                break;
+            case "WITHDRAWAL":
+                transactionContext.setTransactionStrategy(new WithdrawalStrategy());
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported transaction type");
+        }
 
-        TransactionCommand transferCommand = new TransferCommand(
-                sourceAccount,
-                destinationAccount,
+        transactionContext.executeTransaction(source, destination, amount);
+
+        if (source != null) {
+            accountRepository.save(source);
+        }
+        if (destination != null) {
+            accountRepository.save(destination);
+        }
+
+        TransactionEvent event = new TransactionEvent(
+                "TRANSFER",
+                LocalDateTime.now(),
                 amount,
-                transactionObservers
+                source != null ? source.getId() : null,
+                destination != null ? destination.getId() : null,
+                "SUCCESS"
         );
-
-        transferCommand.execute();
-
-        accountRepository.save(sourceAccount);
-        accountRepository.save(destinationAccount);
+        notifyObservers(event);
     }
 }

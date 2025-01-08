@@ -7,6 +7,7 @@ public class TransactionDTO {
     private Long sourceAccountId;
     private Long destinationAccountId;
     private BigDecimal amount;
+    private String transactionType;
 
     public Long getSourceAccountId() {
         return sourceAccountId;
@@ -30,5 +31,13 @@ public class TransactionDTO {
 
     public void setAmount(BigDecimal amount) {
         this.amount = amount;
+    }
+
+    public String getTransactionType() {
+        return transactionType;
+    }
+
+    public void setTransactionType(String transactionType) {
+        this.transactionType = transactionType;
     }
 }

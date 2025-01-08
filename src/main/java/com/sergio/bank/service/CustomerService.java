@@ -9,7 +9,9 @@ import com.sergio.bank.model.Customer;
 import com.sergio.bank.repository.AccountRepository;
 import com.sergio.bank.repository.CustomerRepository;
 import jakarta.transaction.Transactional;
+import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,13 +32,21 @@ public class CustomerService {
     @Autowired
     private AccountMapper accountMapper;
 
-    public CustomerDTO createCustomer(CustomerDTO customerDTO) {
-        Customer customer = new Customer();
-        customer.setName(customerDTO.getName());
-        customer.setEmail(customerDTO.getEmail());
-        customer.setDocumentNumber(customerDTO.getDocumentNumber());
-        customer = customerRepository.save(customer);
-        return customerMapper.toDTO(customer);
+    private final PasswordEncoder passwordEncoder;
+
+    public CustomerService(PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    public CustomerDTO createCustomer(CustomerDTO customerDTO) throws BadRequestException {
+        if (customerRepository.findByEmail(customerDTO.getEmail()).isPresent()) {
+            throw new BadRequestException("El correo electrónico ya está registrado");
+        }
+        Customer customer = customerMapper.toEntity(customerDTO);
+        String encodedPassword = passwordEncoder.encode(customer.getPassword());
+        customer.setPassword(encodedPassword);
+        Customer savedCustomer = customerRepository.save(customer);
+        return customerMapper.toDTO(savedCustomer);
     }
 
     public CustomerDTO getCustomer(Long id) {

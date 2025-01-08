@@ -3,6 +3,7 @@ package com.sergio.bank.controller;
 import com.sergio.bank.dto.AccountDTO;
 import com.sergio.bank.dto.CustomerDTO;
 import com.sergio.bank.service.CustomerService;
+import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +17,7 @@ public class CustomerController {
     private CustomerService customerService;
 
     @PostMapping
-    public ResponseEntity<CustomerDTO> createCustomer(@RequestBody CustomerDTO customerDTO) {
+    public ResponseEntity<CustomerDTO> createCustomer(@RequestBody CustomerDTO customerDTO) throws BadRequestException {
         return ResponseEntity.ok(customerService.createCustomer(customerDTO));
     }
 
