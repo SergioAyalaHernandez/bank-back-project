@@ -11,14 +11,14 @@ import java.math.BigDecimal;
 
 @Component
 public class AccountFactory {
-    public Account createAccount(String type, Customer customer) {
+    public Account createAccount(String type, Customer customer, BigDecimal balance) {
         Account account = switch (type) {
             case MessageConstants.ACCOUNT_TYPE_SAVINGS -> new SavingsAccount();
             case MessageConstants.ACCOUNT_TYPE_CHECKING -> new CheckingAccount();
             default -> throw new IllegalArgumentException(MessageConstants.ERROR_INVALID_ACCOUNT_TYPE + type);
         };
         account.setCustomer(customer);
-        account.setBalance(BigDecimal.ZERO);
+        account.setBalance(balance);
         return account;
     }
 

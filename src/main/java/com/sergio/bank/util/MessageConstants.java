@@ -15,4 +15,5 @@ public class MessageConstants {
     public static final String ERROR_INVALID_ACCOUNT_TYPE = "Invalid account type: ";
     public static final String ERROR_STRATEGY = "Transaction strategy not set";
     public static final String ERROR_INVALID_CREDENTIALS = "Credenciales invalidas";
+    public static final String ERROR_ACCOUNT_NOT_FOUND = "Account not found for ID: %d";
 }

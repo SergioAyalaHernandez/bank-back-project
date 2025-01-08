@@ -8,7 +8,7 @@ import com.sergio.bank.mapper.AccountMapper;
 import com.sergio.bank.mapper.CustomerMapper;
 import com.sergio.bank.model.Account;
 import com.sergio.bank.model.Customer;
-import com.sergio.bank.observer.TransactionObserver;
+import com.sergio.bank.observer.TransactionLogger;
 import com.sergio.bank.repository.AccountRepository;
 import com.sergio.bank.strategy.TransactionContext;
 import com.sergio.bank.strategy.impl.DepositStrategy;
@@ -19,11 +19,8 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @Transactional
@@ -46,30 +43,21 @@ public class AccountServiceImpl {
     @Autowired
     private final TransactionContext transactionContext;
 
-    private final List<TransactionObserver> observers = new ArrayList<>();
-
-    public AccountServiceImpl(AccountRepository accountRepository, AccountFactory accountFactory, CustomerMapper customerMapper, AccountMapper accountMapper, CustomerServiceImpl customerService, TransactionContext transactionContext) {
+    public AccountServiceImpl(AccountRepository accountRepository, AccountFactory accountFactory, CustomerMapper customerMapper, AccountMapper accountMapper, CustomerServiceImpl customerService, TransactionContext transactionContext, TransactionLogger transactionLogger) {
         this.accountRepository = accountRepository;
         this.accountFactory = accountFactory;
         this.customerMapper = customerMapper;
         this.accountMapper = accountMapper;
         this.customerService = customerService;
         this.transactionContext = transactionContext;
+        this.transactionContext.registerObserver(transactionLogger);
     }
 
-    public void registerObserver(TransactionObserver observer) {
-        observers.add(observer);
-    }
 
-    public void notifyObservers(TransactionEvent event) {
-        for (TransactionObserver observer : observers) {
-            observer.onTransactionCompleted(event);
-        }
-    }
 
     public AccountDTO createAccount(AccountDTO accountDTO) {
         Customer customer = customerMapper.toEntity(customerService.getCustomer(accountDTO.getCustomerId()));
-        Account account = accountFactory.createAccount(accountDTO.getType(), customer);
+        Account account = accountFactory.createAccount(accountDTO.getType(), customer, accountDTO.getBalance());
         account = accountRepository.save(account);
         return accountMapper.toDTO(account);
     }
@@ -81,7 +69,16 @@ public class AccountServiceImpl {
     }
 
     @Transactional
-    public void performTransaction(String transactionType, Account source, Account destination, BigDecimal amount) {
+    public void performTransaction(String transactionType, Long sourceId, Long destinationId, BigDecimal amount) {
+        Account source = sourceId != null ? accountRepository.findById(sourceId)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        String.format(MessageConstants.ERROR_ACCOUNT_NOT_FOUND, sourceId))) : null;
+
+        Account destination = destinationId != null ? accountRepository.findById(destinationId)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        String.format(MessageConstants.ERROR_ACCOUNT_NOT_FOUND, destinationId))) : null;
+
+
         switch (transactionType.toUpperCase()) {
             case MessageConstants.TRANSACTION_TYPE_TRANSFER:
                 transactionContext.setTransactionStrategy(new TransferStrategy());
@@ -106,13 +103,14 @@ public class AccountServiceImpl {
         }
 
         TransactionEvent event = new TransactionEvent(
-                MessageConstants.TRANSACTION_TYPE_TRANSFER,
+                transactionType.toUpperCase(),
                 LocalDateTime.now(),
                 amount,
                 source != null ? source.getId() : null,
                 destination != null ? destination.getId() : null,
                 MessageConstants.TRANSACTION_STATUS_SUCCESS
         );
-        notifyObservers(event);
+        transactionContext.notifyObservers(event);
     }
+
 }

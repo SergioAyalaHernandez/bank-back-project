@@ -29,12 +29,12 @@ public class AccountController {
 
     @PostMapping("/transaction")
     public ResponseEntity<Void> performTransaction(@RequestBody TransactionDTO transactionDTO) {
-        /*accountService.performTransaction(
+        accountService.performTransaction(
                 transactionDTO.getTransactionType(), // Tipo de transacción (TRANSFER, DEPOSIT, WITHDRAWAL)
                 transactionDTO.getSourceAccountId(),
                 transactionDTO.getDestinationAccountId(),
                 transactionDTO.getAmount()
-        );*/
+        );
         return ResponseEntity.ok().build();
     }
 }
