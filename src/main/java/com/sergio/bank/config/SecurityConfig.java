@@ -35,14 +35,12 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/api/auth/**").permitAll()
                         // Para acceder a la consola de la h2
-                        .requestMatchers("/h2-console/**").permitAll() // Permitir acceso a H2
+                        .requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers("/error", "/favicon.ico").permitAll()
                         // Endpoints específicos para customers
-                        .requestMatchers(HttpMethod.GET, "/api/customers/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/customers/**").permitAll()
                         // Endpoints específicos para accounts
-                        .requestMatchers(HttpMethod.GET, "/api/accounts/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/accounts/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/accounts").permitAll()
                         .anyRequest().authenticated()
                 )
                 .csrf(csrf -> csrf
