@@ -8,6 +8,14 @@ public class AccountDTO {
     private Long customerId;
     private BigDecimal balance;
 
+    public AccountDTO() {
+    }
+
+    public AccountDTO(Long id, String type) {
+        this.id = id;
+        this.type = type;
+    }
+
     public Long getId() {
         return id;
     }

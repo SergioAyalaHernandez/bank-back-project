@@ -22,5 +22,4 @@ public class AccountFactory {
         return account;
     }
 
-
 }
