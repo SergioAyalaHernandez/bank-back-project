@@ -2,6 +2,7 @@ package com.sergio.bank.controller;
 
 import com.sergio.bank.dto.AccountDTO;
 import com.sergio.bank.dto.TransactionDTO;
+import com.sergio.bank.dto.TransactionDetails;
 import com.sergio.bank.service.impl.AccountServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -73,12 +74,26 @@ class AccountControllerTest {
 
     @Test
     void performTransaction_ShouldExecuteSuccessfully() {
-        doNothing().when(accountService).performTransaction(
-                anyString(), anyLong(), anyLong(), any(BigDecimal.class));
+        TransactionDetails mockTransactionDetails = new TransactionDetails(
+                transactionDTO.getTransactionType().toUpperCase(),
+                transactionDTO.getAmount()
+        );
 
-        ResponseEntity<Void> response = accountController.performTransaction(transactionDTO);
+        when(accountService.performTransaction(
+                anyString(), anyLong(), anyLong(), any(BigDecimal.class))
+        ).thenReturn(mockTransactionDetails);
+
+        ResponseEntity<TransactionDetails> response = accountController.performTransaction(transactionDTO);
+
+        assertNotNull(response.getBody(), "La respuesta no debe ser nula");
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
+
+        TransactionDetails transactionDetails = response.getBody();
+        assertNotNull(transactionDetails);
+        assertEquals(transactionDTO.getTransactionType().toUpperCase(), transactionDetails.getTransactionType());
+        assertEquals(transactionDTO.getAmount(), transactionDetails.getAmount());
+
         verify(accountService).performTransaction(
                 transactionDTO.getTransactionType(),
                 transactionDTO.getSourceAccountId(),
@@ -86,4 +101,5 @@ class AccountControllerTest {
                 transactionDTO.getAmount()
         );
     }
+
 }

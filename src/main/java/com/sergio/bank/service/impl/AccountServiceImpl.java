@@ -1,6 +1,7 @@
 package com.sergio.bank.service.impl;
 
 import com.sergio.bank.dto.AccountDTO;
+import com.sergio.bank.dto.TransactionDetails;
 import com.sergio.bank.event.TransactionEvent;
 import com.sergio.bank.exception.AccountNotFoundException;
 import com.sergio.bank.factory.AccountFactory;
@@ -70,16 +71,32 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Transactional
-    public void performTransaction(String transactionType, Long sourceId, Long destinationId, BigDecimal amount) {
-        Account source = sourceId != null ? accountRepository.findById(sourceId)
-                .orElseThrow(() -> new IllegalArgumentException(
-                        String.format(MessageConstants.ERROR_ACCOUNT_NOT_FOUND, sourceId))) : null;
+    public TransactionDetails performTransaction(String transactionType, Long sourceId, Long destinationId, BigDecimal amount) {
+        Account source = findAccountById(sourceId);
+        Account destination = findAccountById(destinationId);
 
-        Account destination = destinationId != null ? accountRepository.findById(destinationId)
-                .orElseThrow(() -> new IllegalArgumentException(
-                        String.format(MessageConstants.ERROR_ACCOUNT_NOT_FOUND, destinationId))) : null;
+        setTransactionStrategy(transactionType);
 
+        transactionContext.executeTransaction(source, destination, amount);
 
+        saveAccounts(source, destination);
+
+        TransactionEvent event = createTransactionEvent(transactionType, amount, source, destination);
+        transactionContext.notifyObservers(event);
+
+        return new TransactionDetails(transactionType.toUpperCase(),amount);
+    }
+
+    private Account findAccountById(Long accountId) {
+        if (accountId != null) {
+            return accountRepository.findById(accountId)
+                    .orElseThrow(() -> new IllegalArgumentException(
+                            String.format(MessageConstants.ERROR_ACCOUNT_NOT_FOUND, accountId)));
+        }
+        return null;
+    }
+
+    private void setTransactionStrategy(String transactionType) {
         switch (transactionType.toUpperCase()) {
             case MessageConstants.TRANSACTION_TYPE_TRANSFER:
                 transactionContext.setTransactionStrategy(new TransferStrategy());
@@ -93,17 +110,19 @@ public class AccountServiceImpl implements AccountService {
             default:
                 throw new IllegalArgumentException(MessageConstants.ERROR_UNSUPPORTED_TRANSACTION_TYPE);
         }
+    }
 
-        transactionContext.executeTransaction(source, destination, amount);
-
+    private void saveAccounts(Account source, Account destination) {
         if (source != null) {
             accountRepository.save(source);
         }
         if (destination != null) {
             accountRepository.save(destination);
         }
+    }
 
-        TransactionEvent event = new TransactionEvent(
+    private TransactionEvent createTransactionEvent(String transactionType, BigDecimal amount, Account source, Account destination) {
+        return new TransactionEvent(
                 transactionType.toUpperCase(),
                 LocalDateTime.now(),
                 amount,
@@ -111,7 +130,7 @@ public class AccountServiceImpl implements AccountService {
                 destination != null ? destination.getId() : null,
                 MessageConstants.TRANSACTION_STATUS_SUCCESS
         );
-        transactionContext.notifyObservers(event);
     }
+
 
 }
