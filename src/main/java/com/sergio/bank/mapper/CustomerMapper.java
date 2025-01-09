@@ -13,3 +13,4 @@ public interface CustomerMapper {
     @Mapping(target = "id", ignore = true)
     void updateEntityFromDto(CustomerDTO customerDTO, @MappingTarget Customer customer);
 }
+

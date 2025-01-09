@@ -26,6 +26,17 @@ public class CustomerDTO {
     @Size(min = 6, message = "La contraseña debe tener al menos 6 caracteres")
     private String password;
 
+    public CustomerDTO(String name, String email, String documentNumber, String password) {
+        this.name = name;
+        this.email = email;
+        this.documentNumber = documentNumber;
+        this.password = password;
+    }
+
+    public CustomerDTO() {
+
+    }
+
     public Long getId() {
         return id;
     }

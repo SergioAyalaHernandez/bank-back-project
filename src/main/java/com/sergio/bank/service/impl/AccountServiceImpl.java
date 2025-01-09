@@ -10,6 +10,7 @@ import com.sergio.bank.model.Account;
 import com.sergio.bank.model.Customer;
 import com.sergio.bank.observer.TransactionLogger;
 import com.sergio.bank.repository.AccountRepository;
+import com.sergio.bank.service.AccountService;
 import com.sergio.bank.strategy.TransactionContext;
 import com.sergio.bank.strategy.impl.DepositStrategy;
 import com.sergio.bank.strategy.impl.TransferStrategy;
@@ -24,7 +25,7 @@ import java.time.LocalDateTime;
 
 @Service
 @Transactional
-public class AccountServiceImpl {
+public class AccountServiceImpl implements AccountService {
     @Autowired
     private AccountRepository accountRepository;
 
