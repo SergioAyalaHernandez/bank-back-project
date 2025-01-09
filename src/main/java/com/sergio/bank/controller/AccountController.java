@@ -2,6 +2,7 @@ package com.sergio.bank.controller;
 
 import com.sergio.bank.dto.AccountDTO;
 import com.sergio.bank.dto.TransactionDTO;
+import com.sergio.bank.dto.TransactionDetails;
 import com.sergio.bank.service.AccountService;
 import com.sergio.bank.service.impl.AccountServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,13 +30,12 @@ public class AccountController {
     }
 
     @PostMapping("/transaction")
-    public ResponseEntity<Void> performTransaction(@RequestBody TransactionDTO transactionDTO) {
-        accountService.performTransaction(
+    public ResponseEntity<TransactionDetails> performTransaction(@RequestBody TransactionDTO transactionDTO) {
+        return ResponseEntity.ok(accountService.performTransaction(
                 transactionDTO.getTransactionType(), // Tipo de transacción (TRANSFER, DEPOSIT, WITHDRAWAL)
                 transactionDTO.getSourceAccountId(),
                 transactionDTO.getDestinationAccountId(),
                 transactionDTO.getAmount()
-        );
-        return ResponseEntity.ok().build();
+        ));
     }
 }

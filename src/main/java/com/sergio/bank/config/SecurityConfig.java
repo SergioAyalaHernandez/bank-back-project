@@ -35,8 +35,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/api/auth/**").permitAll()
                         // Para acceder a la consola de la h2
-                        .requestMatchers("/h2-console/**").permitAll()
-                        .requestMatchers("/error", "/favicon.ico").permitAll()
+                        .requestMatchers("/h2-console/**","/swagger-ui/**","/v3/api-docs/swagger-config","/v3/api-docs","/swagger-ui.html").permitAll()
+                        .requestMatchers("/error", "/favicon.ico","/favicon-32x32.png").permitAll()
                         // Endpoints específicos para customers
                         .requestMatchers(HttpMethod.POST, "/api/customers/**").permitAll()
                         // Endpoints específicos para accounts
@@ -44,7 +44,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/api/auth/**", "/api/**","/h2-console/**")
+                        .ignoringRequestMatchers("/api/auth/**", "/api/**","/h2-console/**","/swagger-ui.html", "/swagger-ui/**","/v3/api-docs/swagger-config","/v3/api-docs")
                 )
                 .headers(headers -> headers
                         .frameOptions().disable()
