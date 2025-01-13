@@ -2,6 +2,7 @@ package com.sergio.bank.model;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -25,6 +26,14 @@ public class Customer {
 
     @OneToMany(mappedBy = "customer")
     private List<Account> accounts;
+
+    public Customer(Customer existingCustomer) {
+        this.id = existingCustomer.getId();
+        this.name = existingCustomer.getName();
+        this.email = existingCustomer.getEmail();
+        this.password = existingCustomer.getPassword();
+        this.accounts = new ArrayList<>(existingCustomer.getAccounts()); // Crea una nueva lista para evitar modificar la original
+    }
 
     public Long getId() {
         return id;

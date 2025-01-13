@@ -21,5 +21,4 @@ public class AccountFactory {
         account.setBalance(balance);
         return account;
     }
-
 }
