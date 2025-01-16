@@ -132,5 +132,13 @@ public class AccountServiceImpl implements AccountService {
         );
     }
 
+    @Override
+    public AccountDTO updateBalance(Long id, BigDecimal newBalance) {
+        Account account = accountRepository.findById(id)
+                .orElseThrow(() -> new AccountNotFoundException(id));
+        account.setBalance(newBalance);
+        account = accountRepository.save(account);
+        return accountMapper.toDTO(account);
+    }
 
 }
