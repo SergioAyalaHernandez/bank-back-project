@@ -39,8 +39,10 @@ public class SecurityConfig {
                         .requestMatchers("/error", "/favicon.ico","/favicon-32x32.png").permitAll()
                         // Endpoints específicos para customers
                         .requestMatchers(HttpMethod.POST, "/api/customers/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/accounts/**").permitAll()
                         // Endpoints específicos para accounts
                         .requestMatchers(HttpMethod.POST, "/api/accounts").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/accounts/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .csrf(csrf -> csrf

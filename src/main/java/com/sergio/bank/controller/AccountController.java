@@ -3,6 +3,7 @@ package com.sergio.bank.controller;
 import com.sergio.bank.dto.AccountDTO;
 import com.sergio.bank.dto.TransactionDTO;
 import com.sergio.bank.dto.TransactionDetails;
+import com.sergio.bank.dto.UpdateBalanceRequest;
 import com.sergio.bank.service.AccountService;
 import com.sergio.bank.service.impl.AccountServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,4 +39,10 @@ public class AccountController {
                 transactionDTO.getAmount()
         ));
     }
+
+    @PostMapping("/{id}/balance")
+    public ResponseEntity<AccountDTO> updateBalance(@PathVariable Long id, @RequestBody UpdateBalanceRequest request) {
+        return ResponseEntity.ok(accountService.updateBalance(id, request.getNewBalance()));
+    }
+
 }

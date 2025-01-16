@@ -14,4 +14,6 @@ public interface AccountService {
     AccountDTO getAccount(Long id);
 
     TransactionDetails performTransaction(String transactionType, Long sourceId, Long destinationId, BigDecimal amount);
+
+    AccountDTO updateBalance(Long id, BigDecimal newBalance);
 }
