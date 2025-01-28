@@ -46,22 +46,11 @@ public class CustomerServiceImpl implements CustomerService {
         if (customerRepository.findByEmail(customerDTO.getEmail()).isPresent()) {
             throw new BadRequestException(MessageConstants.ERROR_EXIST_EMAIL);
         }
-        Customer customer = mapToCustomer(customerDTO);
-        customer.setPassword(encodePassword(customer.getPassword()));
+        Customer customer = customerMapper.toEntity(customerDTO);
+        String encodedPassword = passwordEncoder.encode(customer.getPassword());
+        customer.setPassword(encodedPassword);
         Customer savedCustomer = customerRepository.save(customer);
-        return mapToDTO(savedCustomer);
-    }
-
-    private String encodePassword(String rawPassword) {
-        return passwordEncoder.encode(rawPassword);
-    }
-
-    private Customer mapToCustomer(CustomerDTO customerDTO) {
-        return customerMapper.toEntity(customerDTO);
-    }
-
-    private CustomerDTO mapToDTO(Customer customer) {
-        return customerMapper.toDTO(customer);
+        return customerMapper.toDTO(savedCustomer);
     }
 
     public CustomerDTO getCustomer(Long id) {
@@ -79,36 +68,23 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public void deleteCustomer(Long id) throws CustomerNotFoundException {
-        Customer customer = findCustomerById(id);
-        deleteAllAccountsForCustomer(id);
-        deleteCustomerEntity(customer);
-    }
+        Customer customer = customerRepository.findById(id)
+                .orElseThrow(() -> new CustomerNotFoundException(id));
 
-    private void deleteAllAccountsForCustomer(Long customerId) {
-        List<Account> accounts = accountRepository.findByCustomerId(customerId);
+        List<Account> accounts = accountRepository.findByCustomerId(id);
         accountRepository.deleteAll(accounts);
-    }
-
-    private void deleteCustomerEntity(Customer customer) {
         customerRepository.delete(customer);
-    }
-
-
-    private Customer copyAndUpdateCustomer(CustomerDTO customerDTO, Customer existingCustomer) {
-        Customer updatedCustomer = new Customer(existingCustomer);
-        customerMapper.updateEntityFromDto(customerDTO, updatedCustomer);
-        if (customerDTO.getPassword() != null && !customerDTO.getPassword().isEmpty()) {
-            updatedCustomer.setPassword(passwordEncoder.encode(customerDTO.getPassword()));
-        }
-        return updatedCustomer;
     }
 
     @Override
     public CustomerDTO updateCustomer(Long id, CustomerDTO customerDTO) throws CustomerNotFoundException, BadRequestException {
         Customer existingCustomer = findCustomerById(id);
-        existingCustomer.setEmail(validateEmailOptional(customerDTO.getEmail(), existingCustomer));
-        Customer updatedCustomer = copyAndUpdateCustomer(customerDTO, existingCustomer);
-        return saveAndReturnCustomer(updatedCustomer);
+        validateEmail(customerDTO.getEmail(), existingCustomer);
+        customerMapper.updateEntityFromDto(customerDTO, existingCustomer);
+        if (customerDTO.getPassword() != null && !customerDTO.getPassword().isEmpty()) {
+            existingCustomer.setPassword(passwordEncoder.encode(customerDTO.getPassword()));
+        }
+        return saveAndReturnCustomer(existingCustomer);
     }
 
     private Customer findCustomerById(Long id) throws CustomerNotFoundException {
@@ -116,11 +92,10 @@ public class CustomerServiceImpl implements CustomerService {
                 .orElseThrow(() -> new CustomerNotFoundException(id));
     }
 
-    private String validateEmailOptional(String email, Customer existingCustomer) {
-        return Optional.ofNullable(email)
-                .filter(e -> !existingCustomer.getEmail().equals(e))
-                .filter(e -> customerRepository.findByEmail(e).isEmpty())
-                .orElseThrow(() -> new BadRequestException(MessageConstants.ERROR_EXIST_EMAIL));
+    private void validateEmail(String email, Customer existingCustomer) throws BadRequestException {
+        if (!existingCustomer.getEmail().equals(email) && customerRepository.findByEmail(email).isPresent()) {
+            throw new BadRequestException(MessageConstants.ERROR_EXIST_EMAIL);
+        }
     }
 
     private CustomerDTO saveAndReturnCustomer(Customer existingCustomer) {
