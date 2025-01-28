@@ -41,7 +41,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/customers/**").permitAll()
                         //.requestMatchers(HttpMethod.GET, "/api/accounts/**").permitAll()
                         // Endpoints específicos para accounts
-                        //.requestMatchers(HttpMethod.POST, "/api/accounts").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/accounts").permitAll()
                         //.requestMatchers(HttpMethod.POST, "/api/accounts/**").permitAll()
                         .anyRequest().authenticated()
                 )
