@@ -50,6 +50,7 @@ public class SecurityConfig {
                 )
                 .headers(headers -> headers
                         .frameOptions().disable()
+
                 )
                 .addFilterBefore(jwtFilter, BasicAuthenticationFilter.class)
                 .build();
