@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 
 @Component
 public class AccountFactory {
-    public Account createAccount(String type, Customer customer, BigDecimal balance) {
+    public Account createAccount(String type, Customer customer, BigDecimal balance, Long accountNumber) {
         Account account = switch (type) {
             case MessageConstants.ACCOUNT_TYPE_SAVINGS -> new SavingsAccount();
             case MessageConstants.ACCOUNT_TYPE_CHECKING -> new CheckingAccount();
@@ -19,6 +19,7 @@ public class AccountFactory {
         };
         account.setCustomer(customer);
         account.setBalance(balance);
+        account.setAccountNumber(accountNumber);
         return account;
     }
 }

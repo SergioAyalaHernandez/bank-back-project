@@ -16,6 +16,7 @@ public abstract class Account {
     private Customer customer;
 
     private BigDecimal balance;
+    private Long accountNumber;
 
     public abstract void debit(BigDecimal amount);
     public abstract void credit(BigDecimal amount);
@@ -42,5 +43,13 @@ public abstract class Account {
 
     public BigDecimal getBalance() {
         return balance;
+    }
+
+    public Long getAccountNumber() {
+        return accountNumber;
+    }
+
+    public void setAccountNumber(Long accountNumber) {
+        this.accountNumber = accountNumber;
     }
 }

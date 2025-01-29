@@ -7,6 +7,7 @@ public class AccountDTO {
     private String type;
     private Long customerId;
     private BigDecimal balance;
+    private Long accountNumber;
 
     public AccountDTO() {
     }
@@ -48,4 +49,11 @@ public class AccountDTO {
         this.balance = balance;
     }
 
+    public Long getAccountNumber() {
+        return accountNumber;
+    }
+
+    public void setAccountNumber(Long accountNumber) {
+        this.accountNumber = accountNumber;
+    }
 }

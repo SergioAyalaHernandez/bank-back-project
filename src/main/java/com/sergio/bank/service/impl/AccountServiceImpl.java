@@ -59,7 +59,8 @@ public class AccountServiceImpl implements AccountService {
 
     public AccountDTO createAccount(AccountDTO accountDTO) {
         Customer customer = customerMapper.toEntity(customerService.getCustomer(accountDTO.getCustomerId()));
-        Account account = accountFactory.createAccount(accountDTO.getType(), customer, accountDTO.getBalance());
+        Long accountNumber = accountDTO.getCustomerId() + LocalDateTime.now().getNano();
+        Account account = accountFactory.createAccount(accountDTO.getType(), customer, accountDTO.getBalance(),accountNumber);
         account = accountRepository.save(account);
         return accountMapper.toDTO(account);
     }
