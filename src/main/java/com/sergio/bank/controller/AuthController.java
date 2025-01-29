@@ -42,7 +42,7 @@ public class AuthController {
             Customer customer = personaRepository.findByEmail(dto.getEmail())
                     .orElseThrow(() -> new UsernameNotFoundException(MessageConstants.ERROR_USER_NOT_FOUND));
 
-            String jwt = jwtUtil.create(dto.getEmail());
+            String jwt = jwtUtil.create(dto.getEmail(), customer.getId());
 
             AuthResponseDto responseDto = new AuthResponseDto(
                     jwt,

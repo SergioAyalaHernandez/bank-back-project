@@ -13,14 +13,14 @@ public class JwtUtil {
     private static String SECRET_KEY = "s3r610";
     private static Algorithm ALGORTIHM = Algorithm.HMAC256(SECRET_KEY);
 
-    public String create(String email) {
+    public String create(String email, Long userId) {
         return JWT.create()
                 .withSubject(email)
+                .withClaim("userId", userId)
                 .withIssuer("javaSS")
                 .withIssuedAt(new Date())
                 .withExpiresAt(new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(15)))
-                .sign(ALGORTIHM)
-                ;
+                .sign(ALGORTIHM);
     }
 
     public boolean isValid(String jwt) {
