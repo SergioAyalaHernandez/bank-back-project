@@ -47,7 +47,8 @@ public class AuthController {
             AuthResponseDto responseDto = new AuthResponseDto(
                     jwt,
                     dto.getEmail(),
-                    customer.getId()
+                    customer.getId(),
+                    customer.getName()
             );
 
             return ResponseEntity.ok()

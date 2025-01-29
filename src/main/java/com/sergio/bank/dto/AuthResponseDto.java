@@ -4,11 +4,13 @@ public class AuthResponseDto {
     private String token;
     private String email;
     private Long userId;
+    private String userName;
 
-    public AuthResponseDto(String token, String email, Long userId) {
+    public AuthResponseDto(String token, String email, Long userId, String username) {
         this.token = token;
         this.email = email;
         this.userId = userId;
+        this.userName = username;
     }
 
     public String getToken() {
@@ -33,5 +35,13 @@ public class AuthResponseDto {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 }
