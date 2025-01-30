@@ -5,12 +5,14 @@ public class AuthResponseDto {
     private String email;
     private Long userId;
     private String userName;
+    private String documentNumber;
 
-    public AuthResponseDto(String token, String email, Long userId, String username) {
+    public AuthResponseDto(String token, String email, Long userId, String userName, String documentNumber) {
         this.token = token;
         this.email = email;
         this.userId = userId;
-        this.userName = username;
+        this.userName = userName;
+        this.documentNumber = documentNumber;
     }
 
     public String getToken() {
@@ -43,5 +45,13 @@ public class AuthResponseDto {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public String getDocumentNumber() {
+        return documentNumber;
+    }
+
+    public void setDocumentNumber(String documentNumber) {
+        this.documentNumber = documentNumber;
     }
 }

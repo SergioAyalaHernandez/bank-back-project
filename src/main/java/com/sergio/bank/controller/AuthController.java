@@ -48,7 +48,8 @@ public class AuthController {
                     jwt,
                     dto.getEmail(),
                     customer.getId(),
-                    customer.getName()
+                    customer.getName(),
+                    customer.getDocumentNumber()
             );
 
             return ResponseEntity.ok()
