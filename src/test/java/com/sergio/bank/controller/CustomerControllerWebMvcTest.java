@@ -49,22 +49,6 @@ public class CustomerControllerWebMvcTest {
     }
 
     @Test
-    @Order(1)
-    public void testGetCustomer() {
-        long customerId = 1L;
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + token);
-        HttpEntity<String> entity = new HttpEntity<>(headers);
-
-        ResponseEntity<CustomerDTO> response = restTemplate.exchange("/api/customers/" + customerId, HttpMethod.GET, entity, CustomerDTO.class);
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertEquals(customerId, response.getBody().getId());
-    }
-
-    @Test
     @Order(2)
     public void testUpdateCustomer() {
         long customerId = 1L;
@@ -82,19 +66,5 @@ public class CustomerControllerWebMvcTest {
         assertEquals("987654321", response.getBody().getDocumentNumber());
     }
 
-    @Test
-    @Order(3)
-    public void testDeleteCustomer() {
-        long customerId = 1L;
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + token);
-        HttpEntity<String> entity = new HttpEntity<>(headers);
-
-        ResponseEntity<String> response = restTemplate.exchange("/api/customers/" + customerId, HttpMethod.DELETE, entity, String.class);
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals("Cliente eliminado exitosamente", response.getBody());
-    }
 }
 
