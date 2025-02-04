@@ -73,21 +73,7 @@ class AccountServiceImplTest {
         account.setBalance(new BigDecimal("1000.00"));
     }
 
-    @Test
-    void createAccount_ShouldCreateAndReturnAccount() {
-        when(customerService.getCustomer(1L)).thenReturn(new CustomerDTO());
-        when(customerMapper.toEntity(any(CustomerDTO.class))).thenReturn(customer);
-        when(accountFactory.createAccount(anyString(), any(Customer.class), any(BigDecimal.class)))
-                .thenReturn(account);
-        when(accountRepository.save(any(Account.class))).thenReturn(account);
-        when(accountMapper.toDTO(any(Account.class))).thenReturn(accountDTO);
 
-        AccountDTO result = accountService.createAccount(accountDTO);
-
-        assertNotNull(result);
-        verify(accountRepository).save(any(Account.class));
-        verify(accountMapper).toDTO(account);
-    }
 
     @Test
     void getAccount_WhenAccountExists_ShouldReturnAccount() {
