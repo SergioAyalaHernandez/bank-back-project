@@ -7,7 +7,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
@@ -19,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @Transactional
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class CustomerControllerWebMvcTest {
+class CustomerControllerWebMvcTest {
 
     @Autowired
     private TestRestTemplate restTemplate;
@@ -50,7 +49,7 @@ public class CustomerControllerWebMvcTest {
 
     @Test
     @Order(2)
-    public void testUpdateCustomer() {
+    void testUpdateCustomer() {
         long customerId = 1L;
         String updateCustomerJson = "{\"name\": \"Sergio Ayala\", \"email\": \"john.doe@example.com\", \"documentNumber\": \"987654321\", \"password\": \"newsecurepassword\"}";
 

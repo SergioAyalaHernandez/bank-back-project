@@ -33,12 +33,6 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<AuthResponseDto> login(@RequestBody LoginDto dto) {
         try {
-            UsernamePasswordAuthenticationToken loginToken = new UsernamePasswordAuthenticationToken(
-                    dto.getEmail(),
-                    dto.getPass()
-            );
-            Authentication authentication = authenticationManager.authenticate(loginToken);
-
             Customer customer = personaRepository.findByEmail(dto.getEmail())
                     .orElseThrow(() -> new UsernameNotFoundException(MessageConstants.ERROR_USER_NOT_FOUND));
 

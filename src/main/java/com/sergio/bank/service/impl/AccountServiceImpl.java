@@ -27,22 +27,11 @@ import java.time.LocalDateTime;
 @Service
 @Transactional
 public class AccountServiceImpl implements AccountService {
-    @Autowired
-    private AccountRepository accountRepository;
-
-    @Autowired
-    private AccountFactory accountFactory;
-
-    @Autowired
-    private AccountMapper accountMapper;
-
-    @Autowired
-    private CustomerMapper customerMapper;
-
-    @Autowired
-    private CustomerServiceImpl customerService;
-
-    @Autowired
+    private final AccountRepository accountRepository;
+    private final AccountFactory accountFactory;
+    private final AccountMapper accountMapper;
+    private final CustomerMapper customerMapper;
+    private final CustomerServiceImpl customerService;
     private final TransactionContext transactionContext;
 
     public AccountServiceImpl(AccountRepository accountRepository, AccountFactory accountFactory, CustomerMapper customerMapper, AccountMapper accountMapper, CustomerServiceImpl customerService, TransactionContext transactionContext, TransactionLogger transactionLogger) {

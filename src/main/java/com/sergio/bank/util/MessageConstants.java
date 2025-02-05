@@ -1,6 +1,9 @@
 package com.sergio.bank.util;
 
 public class MessageConstants {
+    private MessageConstants() {
+        throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
+    }
     public static final String ERROR_EXIST_EMAIL = "El correo electrónico ya está registrado";
     public static final String ERROR_USER_NOT_FOUND = "Usuario no encontrado";
     public static final String CLIENT_DELETED_SUCCESSFULLY  = "Cliente eliminado exitosamente";

@@ -23,7 +23,6 @@ public class UserSecurityService implements UserDetailsService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         Customer customer = customerRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("No existe ese correo"));
-        System.out.println(customer);
         return User.builder()
                 .username(customer.getEmail())
                 .password(customer.getPassword()) // La contraseña ya debe estar encriptada en la base de datos

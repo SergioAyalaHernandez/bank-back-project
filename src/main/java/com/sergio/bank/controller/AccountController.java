@@ -5,8 +5,6 @@ import com.sergio.bank.dto.TransactionDTO;
 import com.sergio.bank.dto.TransactionDetails;
 import com.sergio.bank.dto.UpdateBalanceRequest;
 import com.sergio.bank.service.AccountService;
-import com.sergio.bank.service.impl.AccountServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

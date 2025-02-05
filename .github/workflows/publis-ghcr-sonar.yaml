@@ -1,4 +1,4 @@
-name: docker image ci for GHCR
+name: docker image ci for GHCR equipo 1
 on:
   push:
     branches: [ "main" ]

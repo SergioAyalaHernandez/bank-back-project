@@ -1,7 +1,6 @@
 package com.sergio.bank.service.impl;
 
 import com.sergio.bank.dto.AccountDTO;
-import com.sergio.bank.dto.CustomerDTO;
 import com.sergio.bank.exception.AccountNotFoundException;
 import com.sergio.bank.factory.AccountFactory;
 import com.sergio.bank.mapper.AccountMapper;
@@ -24,7 +23,6 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)

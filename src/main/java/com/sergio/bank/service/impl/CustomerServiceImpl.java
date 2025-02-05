@@ -13,7 +13,6 @@ import com.sergio.bank.repository.CustomerRepository;
 import com.sergio.bank.service.CustomerService;
 import com.sergio.bank.util.MessageConstants;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -23,22 +22,18 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 public class CustomerServiceImpl implements CustomerService {
-    @Autowired
-    private CustomerMapper customerMapper;
-
-    @Autowired
-    private CustomerRepository customerRepository;
-
-    @Autowired
-    private AccountRepository accountRepository;
-
-    @Autowired
-    private AccountMapper accountMapper;
-
+    private final CustomerMapper customerMapper;
+    private final CustomerRepository customerRepository;
+    private final AccountRepository accountRepository;
+    private final AccountMapper accountMapper;
     private final PasswordEncoder passwordEncoder;
 
-    public CustomerServiceImpl(PasswordEncoder passwordEncoder) {
+    public CustomerServiceImpl(PasswordEncoder passwordEncoder, AccountMapper accountMapper, AccountRepository accountRepository, CustomerRepository customerRepository, CustomerMapper customerMapper) {
         this.passwordEncoder = passwordEncoder;
+        this.accountMapper = accountMapper;
+        this.accountRepository = accountRepository;
+        this.customerRepository = customerRepository;
+        this.customerMapper = customerMapper;
     }
 
     public CustomerDTO createCustomer(CustomerDTO customerDTO) throws BadRequestException {
@@ -62,7 +57,7 @@ public class CustomerServiceImpl implements CustomerService {
         return accountRepository.findByCustomerId(id)
                 .stream()
                 .map(accountMapper::toDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
