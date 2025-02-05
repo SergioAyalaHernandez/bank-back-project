@@ -21,12 +21,19 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.TOKEN_GH }}
 
+      - name: Get version from Gradle
+        id: gradle_version
+        run: |
+          chmod +x ./gradlew
+          VERSION=$(grep "version = '" build.gradle | sed "s/version = '//" | sed "s/'//g")
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+
       - name: Build and push
         uses: docker/build-push-action@v4
         with:
           context: .
           push: true
-          tags: ghcr.io/sergioayalahernandez/ms-bank-h2:latest
+          tags: ghcr.io/sergioayalahernandez/ms-bank-h2:${{ steps.gradle_version.outputs.VERSION }}
           build-args: |
             PORT=8080
       - name: Set up JDK 17
