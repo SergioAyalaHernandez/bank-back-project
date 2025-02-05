@@ -1,5 +1,6 @@
 package com.sergio.bank.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -24,8 +25,9 @@ public class Customer {
     @Column(name = "password")
     private String password;
 
-    @OneToMany(mappedBy = "customer")
-    private List<Account> accounts;
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<Account> accounts = new ArrayList<>();
 
 
 
