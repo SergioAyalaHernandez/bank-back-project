@@ -27,7 +27,7 @@ public class CustomerDTO {
     private String password;
 
     public CustomerDTO() {
-
+        // Constructor vacío requerido para la serialización/deserialización
     }
 
     public Long getId() {
