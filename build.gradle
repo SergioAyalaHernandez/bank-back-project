@@ -56,7 +56,7 @@ tasks.named('asciidoctor') {
 
 sonar {
 	properties {
-		property "sonar.projectKey", "SergioAyalaHernandez_BankSergio"
+		property "sonar.projectKey", "SergioAyalaHernandez_bank-back-project"
 		property "sonar.organization", "bank-ms-webflux-transaction"
 		property "sonar.host.url", "https://sonarcloud.io"
 	}
