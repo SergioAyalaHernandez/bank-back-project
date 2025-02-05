@@ -73,19 +73,6 @@ jobs:
           build-args: |
             PORT=8080
 
-  notify:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Send notification email
-        uses: dawidd6/action-send-mail@v3
-        with:
-          server_address: smtp.gmail.com
-          server_port: 587
-          username: ${{ secrets.EMAIL_USER }}
-          password: ${{ env.EMAIL_PASS }}
-          subject: "CI/CD Build Notification"
-          to: example@example.com
-          from: "GitHub Actions <example@example.com>"
-          body: "La imagen Docker ha sido publicada exitosamente: ghcr.io/sergioayalahernandez/ms-bank-h2:${{ env.VERSION }}"
+
+
 
