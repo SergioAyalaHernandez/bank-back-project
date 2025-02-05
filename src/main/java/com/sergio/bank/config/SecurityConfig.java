@@ -51,7 +51,15 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/api/auth/**", "/api/**","/h2-console/**","/swagger-ui.html", "/swagger-ui/**","/v3/api-docs/swagger-config","/v3/api-docs")
+                        .ignoringRequestMatchers(
+                                "/api/auth/**",
+                                "/api/**",
+                                "/h2-console/**",
+                                "/swagger-ui.html",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/swagger-config",
+                                "/v3/api-docs"
+                        )
                 )
                 .headers(headers -> headers
                         .frameOptions(HeadersConfigurer.FrameOptionsConfig::disable)

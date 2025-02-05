@@ -1,5 +1,6 @@
 package com.sergio.bank.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
@@ -13,6 +14,7 @@ public abstract class Account {
     private Long id;
 
     @ManyToOne
+    @JsonBackReference 
     private Customer customer;
 
     private BigDecimal balance;
