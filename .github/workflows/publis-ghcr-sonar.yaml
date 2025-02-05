@@ -32,7 +32,6 @@ jobs:
         run: ./gradlew build --continue --info
 
   sonar:
-    needs: build  # Solo se ejecuta si el build fue exitoso
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -59,13 +58,16 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
           restore-keys: ${{ runner.os }}-gradle
 
-      - name: Run SonarQube analysis
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build and analyze with SonarQube
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./gradlew sonar --continue --info -Dsonar.coverage.exclusions=**
+        run: ./gradlew build sonar --continue --info -Dsonar.coverage.exclusions=**
 
   publish:
-    needs: sonar  # Solo se ejecuta si SonarQube fue exitoso
+    needs: sonar
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
