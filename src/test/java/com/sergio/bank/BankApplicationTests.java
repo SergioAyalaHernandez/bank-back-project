@@ -10,6 +10,7 @@ class BankApplicationTests {
 	@Test
 	@Disabled("Skipping due to context loading issues")
 	void contextLoads() {
+		throw new UnsupportedOperationException("Prueba de carga de contexto aún no implementada.");
 	}
 
 }

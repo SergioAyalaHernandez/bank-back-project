@@ -10,8 +10,8 @@ import java.util.concurrent.TimeUnit;
 
 @Component
 public class JwtUtil {
-    private static String SECRET_KEY = "s3r610";
-    private static Algorithm ALGORTIHM = Algorithm.HMAC256(SECRET_KEY);
+    private static String secretKey = "s3r610";
+    private static Algorithm algorithm = Algorithm.HMAC256(secretKey);
 
     public String create(String email, Long userId) {
         return JWT.create()
@@ -20,12 +20,12 @@ public class JwtUtil {
                 .withIssuer("javaSS")
                 .withIssuedAt(new Date())
                 .withExpiresAt(new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(15)))
-                .sign(ALGORTIHM);
+                .sign(algorithm);
     }
 
     public boolean isValid(String jwt) {
         try {
-            JWT.require(ALGORTIHM)
+            JWT.require(algorithm)
                     .build()
                     .verify(jwt);
             return true;
@@ -35,7 +35,7 @@ public class JwtUtil {
     }
 
     public String getUserName(String jwt) {
-        return JWT.require(ALGORTIHM)
+        return JWT.require(algorithm)
                 .build()
                 .verify(jwt)
                 .getSubject();
