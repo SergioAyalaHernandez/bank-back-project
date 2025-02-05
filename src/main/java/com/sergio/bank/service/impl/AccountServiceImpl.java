@@ -18,7 +18,6 @@ import com.sergio.bank.strategy.impl.TransferStrategy;
 import com.sergio.bank.strategy.impl.WithdrawalStrategy;
 import com.sergio.bank.util.MessageConstants;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;

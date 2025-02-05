@@ -1,6 +1,5 @@
 package com.sergio.bank.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
