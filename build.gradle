@@ -7,7 +7,7 @@ plugins {
 }
 
 group = 'com.sergio'
-version = '1.1.2:latest'
+version = '1.1.2-latest'
 
 java {
 	toolchain {
