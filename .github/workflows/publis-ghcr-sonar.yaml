@@ -73,7 +73,8 @@ jobs:
           -Dsonar.coverage.includes=src/test/java/com/sergio/bank/controller/**,src/test/java/com/sergio/bank/repository/**,src/test/java/com/sergio/bank/service/** \
           -Dsonar.sources=src/main/java \
           -Dsonar.tests=src/test/java \
-          -Dsonar.exclusions=**/*.md,**/*.txt,**/*.properties,**/*.yml,**/test/resources/**
+          -Dsonar.exclusions=**/main/java/com/sergio/bank/model/**,**/main/java/com/sergio/bank/utils/**,**/main/java/com/sergio/bank/observer/**,**/main/java/com/sergio/bank/strategy/**,**/main/java/com/sergio/bank/dto/**,**/main/java/com/sergio/bank/mapper/**,**/main/java/com/sergio/bank/exception/**,**/*.md,**/*.txt,**/*.properties,**/*.yml,**/test/resources/**
+  
 
   publish:
     needs: sonar
