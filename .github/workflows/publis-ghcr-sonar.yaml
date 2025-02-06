@@ -70,8 +70,9 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           ./gradlew build sonar --continue --info \
-          -Dsonar.coverage.exclusions=**/* \
-          -Dsonar.coverage.includes=test/java/com/sergio/bank/controller/**,test/java/com/sergio/bank/repository/**,test/java/com/sergio/bank/service/**
+          -sonar.coverage.exclusions=**/java/com/sergio/bank/model/**,**/java/com/sergio/bank/utils/**,**/java/com/sergio/bank/observer/**,**/java/com/sergio/bank/strategy/**,**/java/com/sergio/bank/dto/**,**/java/com/sergio/bank/mapper/**,**/java/com/sergio/bank/exception/**
+          -Dsonar.coverage.includes=**/test/java/com/sergio/bank/controller/**,**/test/java/com/sergio/bank/repository/**,**/test/java/com/sergio/bank/service/**
+
 
   publish:
     needs: sonar
