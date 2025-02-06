@@ -33,10 +33,6 @@ public class AuthController {
             Customer customer = personaRepository.findByEmail(dto.getEmail())
                     .orElseThrow(() -> new UsernameNotFoundException(MessageConstants.ERROR_USER_NOT_FOUND));
 
-            if (!customer.getPassword().equals(dto.getPass())) {
-                throw new BadCredentialsException(MessageConstants.ERROR_INVALID_CREDENTIALS);
-            }
-
             String jwt = jwtUtil.create(dto.getEmail(), customer.getId());
 
             AuthResponseDto responseDto = new AuthResponseDto(
