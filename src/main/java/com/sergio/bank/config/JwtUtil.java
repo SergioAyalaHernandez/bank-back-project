@@ -13,7 +13,7 @@ public class JwtUtil {
     private static String secretKey = "s3r610";
     private static Algorithm algorithm = Algorithm.HMAC256(secretKey);
 
-    public String create(String email, Long userId) {
+    public static String create(String email, Long userId) {
         return JWT.create()
                 .withSubject(email)
                 .withClaim("userId", userId)

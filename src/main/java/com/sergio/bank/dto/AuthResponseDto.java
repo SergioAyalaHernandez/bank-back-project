@@ -54,4 +54,5 @@ public class AuthResponseDto {
     public void setDocumentNumber(String documentNumber) {
         this.documentNumber = documentNumber;
     }
+
 }
