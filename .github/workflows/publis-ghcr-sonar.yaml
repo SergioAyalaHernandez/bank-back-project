@@ -73,7 +73,7 @@ jobs:
           -Dsonar.coverage.includes=src/test/java/com/sergio/bank/controller/**,src/test/java/com/sergio/bank/repository/**,src/test/java/com/sergio/bank/service/** \
           -Dsonar.sources=src/main/java \
           -Dsonar.tests=src/test/java \
-          -Dsonar.exclusions=**/main/java/com/sergio/bank/model/**,**/main/java/com/sergio/bank/util/**,**/main/java/com/sergio/bank/observer/**,**/main/java/com/sergio/bank/strategy/**,,**/main/java/com/sergio/bank/sercive/** ,**/main/java/com/sergio/bank/dto/**,**/main/java/com/sergio/bank/mapper/**,**/main/java/com/sergio/bank/exception/**,**/main/java/com/sergio/bank/factory/**,**/main/java/com/sergio/bank/event/**,**/main/java/com/sergio/bank/repository/**,**/main/java/com/sergio/bank/BankApplication.java,**/*.json,**/*.png,**/*.md,**/*.txt,**/*.properties,**/*.gradle,**/*.yml,**/test/resources/**
+          -Dsonar.exclusions=**/main/java/com/sergio/bank/model/**,**/main/java/com/sergio/bank/util/**,**/main/java/com/sergio/bank/observer/**,**/main/java/com/sergio/bank/strategy/**,**/main/java/com/sergio/bank/service/**,**/main/java/com/sergio/bank/dto/**,**/main/java/com/sergio/bank/mapper/**,**/main/java/com/sergio/bank/exception/**,**/main/java/com/sergio/bank/factory/**,**/main/java/com/sergio/bank/event/**,**/main/java/com/sergio/bank/repository/**,**/main/java/com/sergio/bank/BankApplication.java,**/*.json,**/*.png,**/*.md,**/*.txt,**/*.properties,**/*.gradle,**/*.yml,**/test/resources/**
   
 
   publish:
