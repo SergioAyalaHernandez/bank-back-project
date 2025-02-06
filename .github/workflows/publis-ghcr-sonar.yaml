@@ -32,8 +32,8 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build project
-        run: ./gradlew build --continue --info
-
+        run: ./gradlew build sonar --continue --info \
+          -Dsonar.coverage.exclusions=**/* \
   sonar:
     needs: build
     runs-on: ubuntu-latest
@@ -69,10 +69,8 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          ./gradlew build sonarqube --continue --info \
-          -Dsonar.coverage.includes="test/java/com/sergio/bank/controller/**,test/java/com/sergio/bank/repository/**,test/java/com/sergio/bank/service/**" \
-          -Dsonar.coverage.exclusions="**/main/java/com/sergio/bank/config/**,**/main/java/com/sergio/bank/event/**,**/main/java/com/sergio/bank/factory/**,**/main/java/com/sergio/bank/observer/**,**/main/java/com/sergio/bank/strategy/**,**/main/java/com/sergio/bank/util/**"
-  
+          ./gradlew build sonar --continue --info \
+          -Dsonar.coverage.includes=test/java/com/sergio/bank/controller/**,test/java/com/sergio/bank/repository/**,test/java/com/sergio/bank/service/**
 
   publish:
     needs: sonar
