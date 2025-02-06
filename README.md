@@ -370,76 +370,115 @@ Para automatizar la construcción y despliegue de la imagen Docker, configuramos
 ### Archivo YAML del Pipeline
 
 ```yaml
-name: Docker Image CI for GHCR
-on:
-  push:
-    branches: [ "main" ]
+# Docker Image CI for GHCR
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      # 1. Checkout del código fuente
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      
-      # 2. Configuración de Docker Buildx para multi-plataforma
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-      
-      # 3. Login en GitHub Container Registry (GHCR)
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v2
-        with:
-          registry: ghcr.io
-          username: '***************'
-          password: '***************'
-      
-      # 4. Construcción y subida de la imagen Docker
-      - name: Build and Push Docker Image
-        uses: docker/build-push-action@v4
-        with:
-          context: .
-          push: true
-          tags: ghcr.io/'***************'/ms-bank-h2:latest
-          build-args: |
-            PORT=8080
-      
-      # 5. Configuración de JDK 17
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          java-version: 17
-          distribution: 'zulu'
-      
-      # 6. Caché para SonarQube
-      - name: Cache SonarQube packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.sonar/cache
-          key: '***************'-sonar
-          restore-keys: '***************'-sonar
-      
-      # 7. Permisos de ejecución para Gradle Wrapper
-      - name: Grant execute permission for Gradlew
-        run: chmod +x gradlew
-      
-      # 8. Caché de dependencias de Gradle
-      - name: Cache Gradle packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.gradle/caches
-          key: '***************'-gradle-'***************'
-          restore-keys: '***************'-gradle
-      
-      # 9. Construcción y análisis de calidad con SonarQube
-      - name: Build and Analyze with SonarQube
-        env:
-          SONAR_TOKEN: '***************'
-        run: ./gradlew build sonar --continue --info
+   Este pipeline está diseñado para realizar la integración continua de una imagen Docker y subirla a GitHub Container Registry (GHCR).
+
+## Descripción de los pasos del pipeline
+
+### 1. Disparadores del pipeline
+El pipeline se activa en dos situaciones:
+   - **Push a la rama `main`**: Esto ocurre cuando se hace un push a la rama principal.
+   - **Pull request a la rama `main`**: Esto ocurre cuando se crea o actualiza un pull request dirigido a la rama `main`.
+
+### 2. Job: `build`
+   Este trabajo compila el proyecto y prepara el entorno para la construcción.
+
+#### 2.1. `actions/checkout@v4`
+- **Descripción**: Clona el repositorio en el entorno de ejecución.
+- **Opciones**:
+     - `fetch-depth: 0`: Esto asegura que todo el historial de commits se obtenga en lugar de solo el último commit.
+
+#### 2.2. `actions/setup-java@v4`
+- **Descripción**: Configura JDK 17 para el entorno de ejecución.
+- **Opciones**:
+     - `java-version: 17`: Especifica que se utilizará JDK 17.
+     - `distribution: 'zulu'`: Utiliza la distribución Zulu de OpenJDK.
+
+#### 2.3. `actions/cache@v4` (Gradle)
+- **Descripción**: Crea un cache para las dependencias de Gradle para acelerar las ejecuciones posteriores.
+- **Opciones**:
+     - `path: ~/.gradle/caches`: Especifica la ruta del cache de Gradle.
+     - `key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}`: Define la clave del cache basada en el sistema operativo y en los archivos `gradle`.
+     - `restore-keys: ${{ runner.os }}-gradle`: Restaura las claves de cache para el sistema operativo.
+
+#### 2.4. `chmod +x gradlew`
+- **Descripción**: Asigna permisos de ejecución al script `gradlew` (el wrapper de Gradle).
+
+#### 2.5. `./gradlew build --continue --info`
+- **Descripción**: Construye el proyecto utilizando Gradle.
+- **Opciones**:
+     - `--continue`: Continúa la compilación a pesar de los errores.
+     - `--info`: Proporciona más información de la compilación.
+
+### 3. Job: `sonar`
+   Este trabajo se encarga de realizar un análisis estático del código utilizando SonarQube después de la construcción del proyecto.
+
+#### 3.1. `actions/checkout@v4`
+- **Descripción**: Clona nuevamente el repositorio para obtener el código más actualizado.
+
+#### 3.2. `actions/setup-java@v4`
+- **Descripción**: Configura JDK 17 para el entorno de análisis.
+
+#### 3.3. `actions/cache@v4` (SonarQube)
+- **Descripción**: Crea un cache para los paquetes de SonarQube para acelerar las ejecuciones posteriores.
+- **Opciones**:
+     - `path: ~/.sonar/cache`: Ruta del cache de SonarQube.
+     - `key: ${{ runner.os }}-sonar`: Define la clave del cache.
+     - `restore-keys: ${{ runner.os }}-sonar`: Restaura las claves de cache.
+
+#### 3.4. `actions/cache@v4` (Gradle)
+- **Descripción**: Vuelve a crear el cache para las dependencias de Gradle.
+
+#### 3.5. `chmod +x gradlew`
+- **Descripción**: Asigna permisos de ejecución al script `gradlew`.
+
+#### 3.6. `./gradlew build sonar --continue --info`
+- **Descripción**: Ejecuta la construcción y el análisis con SonarQube.
+- **Variables de entorno**:
+                 - `SONAR_TOKEN`: Token de autenticación para SonarQube.
+- **Opciones**:
+     - `-Dsonar.coverage.includes`: Especifica las rutas de los archivos de prueba a incluir en el análisis.
+     - `-Dsonar.sources`: Ruta de los archivos fuente a analizar.
+     - `-Dsonar.tests`: Ruta de los archivos de prueba.
+     - `-Dsonar.exclusions`: Especifica las rutas de los archivos a excluir del análisis.
+
+### 4. Job: `publish`
+   Este trabajo se encarga de construir y subir la imagen Docker a GitHub Container Registry (GHCR).
+
+#### 4.1. `actions/checkout@v4`
+- **Descripción**: Clona nuevamente el repositorio para obtener el código más actualizado.
+
+#### 4.2. `docker/setup-buildx-action@v2`
+- **Descripción**: Configura `docker buildx` para construir imágenes Docker de manera avanzada.
+
+#### 4.3. `docker/login-action@v2`
+- **Descripción**: Inicia sesión en GitHub Container Registry para poder subir la imagen Docker.
+- **Opciones**:
+     - `registry: ghcr.io`: Especifica que la autenticación será para GHCR.
+     - `username: ${{ github.actor }}`: Utiliza el nombre de usuario del autor del commit.
+     - `password: ${{ secrets.TOKEN_GH }}`: Utiliza el token de autenticación guardado en los secretos.
+
+#### 4.4. `Get version from Gradle`
+- **Descripción**: Obtiene la versión del proyecto desde el archivo `build.gradle`.
+- **Comandos**:
+     - Extrae la versión del archivo `build.gradle` y la guarda en una variable de entorno.
+
+#### 4.5. `docker/build-push-action@v4`
+- **Descripción**: Construye y sube la imagen Docker.
+- **Opciones**:
+     - `context: .`: Establece el contexto de construcción en el directorio actual.
+     - `push: true`: Sube la imagen al registro.
+     - `tags: ghcr.io/sergioayalahernandez/ms-bank-h2:${{ env.VERSION }}`: Etiqueta la imagen con la versión obtenida de Gradle.
+     - `build-args: |`: Establece los argumentos de construcción.
+           - `PORT=8080`: Especifica el puerto a usar en el contenedor.
+
+### Resumen:
+   Este pipeline realiza la construcción, análisis con SonarQube y publicación de una imagen Docker en GitHub Container Registry. Utiliza Gradle para la construcción, configura Java JDK 17, crea caches para mejorar el tiempo de ejecución y realiza análisis de código con SonarQube para verificar la calidad del código antes de construir la imagen Docker y subirla a GHCR.
+
 ```
+
+![img_3.png](img_3.png)
 
 ---
 ## 6. Integración con SonarCloud
@@ -453,7 +492,36 @@ Para el análisis de calidad del código, usamos SonarCloud:
 5. Desde GitHub Actions, ejecutamos el análisis con el token generado.
 6. Visualizamos el reporte de calidad en SonarCloud.
 
-![SonarCloud Reporte](image-1.png)
+![img_2.png](img_2.png)
+
+## 7.integración con podman
+
+Se crea un archivo podman-compose yml, el cuál nos asegura el despliegue de los packages:
+
+```yaml
+version: "3"
+services:
+  ms-bank-h2:
+    image: ghcr.io/sergioayalahernandez/ms-bank-h2:latest
+    ports:
+      - "8080:8080"
+    network_mode: host
+    container_name: sofka-bank-back-h2
+
+  ms2-bank-reactive:
+    image: ghcr.io/sergioayalahernandez/ms2-bank-reactive:v.1.1.9
+    ports:
+      - "8081:8081"
+    network_mode: host
+    container_name: sofka-bank-back-reactive
+
+  sofka-bank-front:
+    image: ghcr.io/johanquimbayo/sofka-u-bank-front:latest
+    ports:
+      - "3000:3000"
+    network_mode: host
+    container_name: sofka-bank-front
+```
 
 # Licencia SIAH
 
