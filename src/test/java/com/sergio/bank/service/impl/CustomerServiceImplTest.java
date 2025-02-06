@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
-public class CustomerServiceImplTest {
+class CustomerServiceImplTest {
 
     @Mock
     private CustomerRepository customerRepository;
@@ -32,7 +32,7 @@ public class CustomerServiceImplTest {
     private CustomerMapper customerMapper;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         // Configuración inicial para Customer y CustomerDTO
         customer = new Customer();
         customer.setId(1L);
@@ -45,7 +45,7 @@ public class CustomerServiceImplTest {
     }
 
     @Test
-    public void testCreateCustomer_EmailAlreadyExists() {
+    void testCreateCustomer_EmailAlreadyExists() {
         // Arrange
         when(customerRepository.findByEmail(customerDTO.getEmail())).thenReturn(java.util.Optional.of(new Customer()));
 
@@ -57,7 +57,7 @@ public class CustomerServiceImplTest {
     }
 
     @Test
-    public void testGetCustomer_Success() {
+    void testGetCustomer_Success() {
         // Arrange: Simulamos que el repositorio devuelve un cliente con ID 1
         when(customerRepository.findById(1L)).thenReturn(java.util.Optional.of(customer));
         when(customerMapper.toDTO(customer)).thenReturn(customerDTO);
@@ -75,7 +75,7 @@ public class CustomerServiceImplTest {
     }
 
     @Test
-    public void testGetCustomer_NotFound() {
+    void testGetCustomer_NotFound() {
         // Arrange
         when(customerRepository.findById(1L)).thenReturn(java.util.Optional.empty());
 

@@ -2,7 +2,6 @@ package com.sergio.bank.service.impl;
 
 import com.sergio.bank.model.TransactionLog;
 import com.sergio.bank.repository.TransactionLogRepository;
-import com.sergio.bank.service.impl.TransactionLogServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,11 +14,11 @@ import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
-import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)  // Esto es necesario para que Mockito inicialice los mocks
-public class TransactionLogServiceImplTest {
+class TransactionLogServiceImplTest {
 
     @Mock
     private TransactionLogRepository transactionLogRepository;
@@ -40,7 +39,7 @@ public class TransactionLogServiceImplTest {
     }
 
     @Test
-    public void testGetAllTransactionLogs_ReturnsPage() {
+    void testGetAllTransactionLogs_ReturnsPage() {
         // Arrange: Simulamos que el repositorio devuelve una página de registros
         when(transactionLogRepository.findAll(pageable)).thenReturn(transactionLogPage);
 
@@ -56,7 +55,7 @@ public class TransactionLogServiceImplTest {
     }
 
     @Test
-    public void testGetAllTransactionLogs_EmptyPage() {
+    void testGetAllTransactionLogs_EmptyPage() {
         // Arrange: Simulamos que el repositorio devuelve una página vacía
         when(transactionLogRepository.findAll(pageable)).thenReturn(Page.empty());
 

@@ -2,7 +2,6 @@ package com.sergio.bank.controller;
 
 import com.sergio.bank.config.JwtUtil;
 import com.sergio.bank.dto.LoginDto;
-import com.sergio.bank.model.Customer;
 import com.sergio.bank.repository.CustomerRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
