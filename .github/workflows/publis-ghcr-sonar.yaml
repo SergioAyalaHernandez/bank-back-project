@@ -32,10 +32,8 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build project
-        run: |
-          ./gradlew build sonarqube --continue --info \
-          -Dsonar.coverage.includes="test/java/com/sergio/bank/controller/**,test/java/com/sergio/bank/repository/**,test/java/com/sergio/bank/service/**" \
-          -Dsonar.coverage.exclusions="**/main/java/com/sergio/bank/model/**,**/main/java/com/sergio/bank/util/**,**/main/java/com/sergio/bank/observer/**,**/main/java/com/sergio/bank/strategy/**,**/main/java/com/sergio/bank/dto/**,**/main/java/com/sergio/bank/mapper/**,**/main/java/com/sergio/bank/exception/**"
+        run: ./gradlew build --continue --info
+
   sonar:
     needs: build
     runs-on: ubuntu-latest
@@ -72,7 +70,10 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           ./gradlew build sonar --continue --info \
-          -Dsonar.coverage.includes=test/java/com/sergio/bank/controller/**,test/java/com/sergio/bank/repository/**,test/java/com/sergio/bank/service/**
+          -Dsonar.coverage.includes=src/test/java/com/sergio/bank/controller/**,src/test/java/com/sergio/bank/repository/**,src/test/java/com/sergio/bank/service/** \
+          -Dsonar.sources=src/main/java \
+          -Dsonar.tests=src/test/java \
+          -Dsonar.exclusions=**/*.md,**/*.txt,**/*.properties,**/*.yml,**/test/resources/**
 
   publish:
     needs: sonar
