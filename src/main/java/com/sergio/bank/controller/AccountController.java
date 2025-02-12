@@ -1,8 +1,6 @@
 package com.sergio.bank.controller;
 
 import com.sergio.bank.dto.AccountDTO;
-import com.sergio.bank.dto.TransactionDTO;
-import com.sergio.bank.dto.TransactionDetails;
 import com.sergio.bank.dto.UpdateBalanceRequest;
 import com.sergio.bank.service.AccountService;
 import org.springframework.http.ResponseEntity;
@@ -28,19 +26,13 @@ public class AccountController {
         return ResponseEntity.ok(accountService.getAccount(id));
     }
 
-    @PostMapping("/transaction")
-    public ResponseEntity<TransactionDetails> performTransaction(@RequestBody TransactionDTO transactionDTO) {
-        return ResponseEntity.ok(accountService.performTransaction(
-                transactionDTO.getTransactionType(), // Tipo de transacción (TRANSFER, DEPOSIT, WITHDRAWAL)
-                transactionDTO.getSourceAccountId(),
-                transactionDTO.getDestinationAccountId(),
-                transactionDTO.getAmount()
-        ));
-    }
-
     @PostMapping("/{id}/balance")
     public ResponseEntity<AccountDTO> updateBalance(@PathVariable Long id, @RequestBody UpdateBalanceRequest request) {
         return ResponseEntity.ok(accountService.updateBalance(id, request.getNewBalance()));
     }
 
+    @GetMapping("/customer/{id}")
+    public ResponseEntity<AccountDTO> getAccountsByCustomerId(@PathVariable Long id) {
+        return ResponseEntity.ok(accountService.getAccountsByCustomerId(id));
+    }
 }
