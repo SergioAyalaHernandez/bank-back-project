@@ -9,7 +9,8 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface AccountMapper {
     @Mapping(target = "type", expression = "java(getAccountType(account))")
-    @Mapping(target = "customerId", source = "customer.id")
+    @Mapping(target = "customerId", source = "customerId")
+
     AccountDTO toDTO(Account account);
 
     default String getAccountType(Account account) {

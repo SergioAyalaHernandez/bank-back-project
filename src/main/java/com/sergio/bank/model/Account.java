@@ -1,6 +1,5 @@
 package com.sergio.bank.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
@@ -13,9 +12,8 @@ public abstract class Account {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JsonBackReference 
-    private Customer customer;
+    @Column(name = "customer_id", nullable = false)
+    private Long customerId;
 
     private BigDecimal balance;
     private Long accountNumber;
@@ -27,8 +25,8 @@ public abstract class Account {
         this.id = id;
     }
 
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
+    public void setCustomerId(Long customerId) {
+        this.customerId = customerId;
     }
 
     public void setBalance(BigDecimal balance) {
@@ -39,8 +37,8 @@ public abstract class Account {
         return id;
     }
 
-    public Customer getCustomer() {
-        return customer;
+    public Long getCustomerId() {
+        return customerId;
     }
 
     public BigDecimal getBalance() {
