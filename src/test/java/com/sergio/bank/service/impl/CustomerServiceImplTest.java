@@ -1,11 +1,7 @@
 package com.sergio.bank.service.impl;
 
-import com.sergio.bank.dto.CustomerDTO;
 import com.sergio.bank.exception.BadRequestException;
 import com.sergio.bank.exception.CustomerNotFoundException;
-import com.sergio.bank.mapper.CustomerMapper;
-import com.sergio.bank.model.Customer;
-import com.sergio.bank.repository.CustomerRepository;
 import com.sergio.bank.util.MessageConstants;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

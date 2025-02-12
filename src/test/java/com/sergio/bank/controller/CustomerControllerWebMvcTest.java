@@ -1,7 +1,5 @@
 package com.sergio.bank.controller;
 
-import com.sergio.bank.dto.AuthResponseDto;
-import com.sergio.bank.dto.CustomerDTO;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;

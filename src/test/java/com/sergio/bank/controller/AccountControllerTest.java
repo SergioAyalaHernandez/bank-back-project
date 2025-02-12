@@ -1,8 +1,6 @@
 package com.sergio.bank.controller;
 
 import com.sergio.bank.dto.AccountDTO;
-import com.sergio.bank.dto.TransactionDTO;
-import com.sergio.bank.dto.TransactionDetails;
 import com.sergio.bank.service.impl.AccountServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
