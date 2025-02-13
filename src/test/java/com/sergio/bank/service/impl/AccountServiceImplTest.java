@@ -166,7 +166,7 @@ class AccountServiceImplTest {
 
         Exception exception = assertThrows(IllegalArgumentException.class,
                 () -> accountService.getAccountsByCustomerId(customerId));
-        assertTrue(exception.getMessage().contains(String.valueOf(customerId)));
+        assertTrue(exception.getMessage().contains("No se encontraron cuentas"));
     }
 
 
