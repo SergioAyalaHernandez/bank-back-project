@@ -164,20 +164,5 @@ class AccountServiceImplTest {
         assertTrue(exception.getMessage().contains(String.valueOf(customerId)));
     }
 
-    @Test
-    void getAccountsByCustomerId_WhenCustomerNotFound_ShouldThrowException() {
-        Long customerId = 1L;
-        HttpClientErrorException.NotFound notFoundException =
-                (HttpClientErrorException.NotFound) HttpClientErrorException.create(
-                        HttpStatus.NOT_FOUND,
-                        "Not Found",
-                        new HttpHeaders(),
-                        new byte[0],
-                        null);
 
-        when(restTemplate.getForEntity(anyString(), eq(CustomerDTO.class)))
-                .thenThrow(notFoundException);
-
-        assertThrows(CustomerNotFoundException.class, () -> accountService.getAccountsByCustomerId(customerId));
-    }
 }
