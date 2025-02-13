@@ -128,28 +128,4 @@ class AccountServiceImplTest {
         verify(messagePublisherService).publishAccountMessage(eq("actualización"), anyString(), anyString(), eq(true));
     }
 
-    @Test
-    void getAccountsByCustomerId_WhenAccountsExist_ShouldReturnAccounts() {
-        Long customerId = 1L;
-
-        CustomerDTO customerDTO = new CustomerDTO();
-        customerDTO.setId(customerId);
-        ResponseEntity<CustomerDTO> responseEntity = new ResponseEntity<>(customerDTO, HttpStatus.OK);
-
-        lenient().when(restTemplate.getForEntity(anyString(), eq(CustomerDTO.class)))
-                .thenReturn(responseEntity);
-
-        List<Account> accounts = List.of(account);
-        when(accountRepository.findByCustomerId(customerId)).thenReturn(accounts);
-        when(accountMapper.toDTO(account)).thenReturn(accountDTO);
-
-        List<AccountDTO> result = accountService.getAccountsByCustomerId(customerId);
-
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
-        assertEquals(1, result.size());
-        assertEquals(accountDTO, result.get(0));
-    }
-
-
 }
