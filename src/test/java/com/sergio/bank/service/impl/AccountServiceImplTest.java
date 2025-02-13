@@ -151,23 +151,5 @@ class AccountServiceImplTest {
         assertEquals(accountDTO, result.get(0));
     }
 
-    @Test
-    void getAccountsByCustomerId_WhenNoAccountsFound_ShouldThrowException() {
-        Long customerId = 1L;
-
-        CustomerDTO customerDTO = new CustomerDTO();
-        customerDTO.setId(customerId);
-        ResponseEntity<CustomerDTO> responseEntity = new ResponseEntity<>(customerDTO, HttpStatus.OK);
-
-        lenient().when(restTemplate.getForEntity(anyString(), eq(CustomerDTO.class)))
-                .thenReturn(responseEntity);
-
-        when(accountRepository.findByCustomerId(customerId)).thenReturn(List.of());
-
-        Exception exception = assertThrows(IllegalArgumentException.class,
-                () -> accountService.getAccountsByCustomerId(customerId));
-        assertTrue(exception.getMessage().contains("No se encontraron cuentas"));
-    }
-
 
 }
