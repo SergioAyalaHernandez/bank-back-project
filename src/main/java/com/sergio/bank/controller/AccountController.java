@@ -6,6 +6,8 @@ import com.sergio.bank.service.AccountService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/accounts")
 public class AccountController {
@@ -32,7 +34,7 @@ public class AccountController {
     }
 
     @GetMapping("/customer/{id}")
-    public ResponseEntity<AccountDTO> getAccountsByCustomerId(@PathVariable Long id) {
+    public ResponseEntity<List<AccountDTO>> getAccountsByCustomerId(@PathVariable Long id) {
         return ResponseEntity.ok(accountService.getAccountsByCustomerId(id));
     }
 }
