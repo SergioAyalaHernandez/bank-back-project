@@ -135,7 +135,9 @@ class AccountServiceImplTest {
         CustomerDTO customerDTO = new CustomerDTO();
         customerDTO.setId(customerId);
         ResponseEntity<CustomerDTO> responseEntity = new ResponseEntity<>(customerDTO, HttpStatus.OK);
-        when(restTemplate.getForEntity(anyString(), eq(CustomerDTO.class))).thenReturn(responseEntity);
+
+        lenient().when(restTemplate.getForEntity(anyString(), eq(CustomerDTO.class)))
+                .thenReturn(responseEntity);
 
         List<Account> accounts = List.of(account);
         when(accountRepository.findByCustomerId(customerId)).thenReturn(accounts);
@@ -152,10 +154,13 @@ class AccountServiceImplTest {
     @Test
     void getAccountsByCustomerId_WhenNoAccountsFound_ShouldThrowException() {
         Long customerId = 1L;
+
         CustomerDTO customerDTO = new CustomerDTO();
         customerDTO.setId(customerId);
         ResponseEntity<CustomerDTO> responseEntity = new ResponseEntity<>(customerDTO, HttpStatus.OK);
-        when(restTemplate.getForEntity(anyString(), eq(CustomerDTO.class))).thenReturn(responseEntity);
+
+        lenient().when(restTemplate.getForEntity(anyString(), eq(CustomerDTO.class)))
+                .thenReturn(responseEntity);
 
         when(accountRepository.findByCustomerId(customerId)).thenReturn(List.of());
 
