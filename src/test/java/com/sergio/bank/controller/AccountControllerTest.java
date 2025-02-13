@@ -1,7 +1,8 @@
 package com.sergio.bank.controller;
 
 import com.sergio.bank.dto.AccountDTO;
-import com.sergio.bank.service.impl.AccountServiceImpl;
+import com.sergio.bank.dto.UpdateBalanceRequest;
+import com.sergio.bank.service.AccountService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -20,13 +23,12 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class AccountControllerTest {
     @Mock
-    private AccountServiceImpl accountService;
+    private AccountService accountService;
 
     @InjectMocks
     private AccountController accountController;
 
     private AccountDTO accountDTO;
-    private TransactionDTO transactionDTO;
 
     @BeforeEach
     void setUp() {
@@ -34,12 +36,6 @@ class AccountControllerTest {
         accountDTO.setCustomerId(1L);
         accountDTO.setType("SAVINGS");
         accountDTO.setBalance(new BigDecimal("1000.00"));
-
-        transactionDTO = new TransactionDTO();
-        transactionDTO.setTransactionType("TRANSFER");
-        transactionDTO.setSourceAccountId(1L);
-        transactionDTO.setDestinationAccountId(2L);
-        transactionDTO.setAmount(new BigDecimal("100.00"));
     }
 
     @Test
@@ -71,33 +67,43 @@ class AccountControllerTest {
     }
 
     @Test
-    void performTransaction_ShouldExecuteSuccessfully() {
-        TransactionDetails mockTransactionDetails = new TransactionDetails(
-                transactionDTO.getTransactionType().toUpperCase(),
-                transactionDTO.getAmount()
+    void updateBalance_ShouldReturnUpdatedAccount() {
+        Long accountId = 1L;
+        UpdateBalanceRequest request = new UpdateBalanceRequest();
+        request.setNewBalance(new BigDecimal("1500.00"));
+
+        AccountDTO updatedAccountDTO = new AccountDTO();
+        updatedAccountDTO.setCustomerId(1L);
+        updatedAccountDTO.setType("SAVINGS");
+        updatedAccountDTO.setBalance(new BigDecimal("1500.00"));
+
+        when(accountService.updateBalance(accountId, request.getNewBalance())).thenReturn(updatedAccountDTO);
+
+        ResponseEntity<AccountDTO> response = accountController.updateBalance(accountId, request);
+
+        assertAll(
+                () -> assertNotNull(response),
+                () -> assertEquals(HttpStatus.OK, response.getStatusCode()),
+                () -> assertEquals(updatedAccountDTO, response.getBody())
         );
+        verify(accountService).updateBalance(accountId, request.getNewBalance());
+    }
 
-        when(accountService.performTransaction(
-                anyString(), anyLong(), anyLong(), any(BigDecimal.class))
-        ).thenReturn(mockTransactionDetails);
+    @Test
+    void getAccountsByCustomerId_ShouldReturnAccount() {
+        Long customerId = 1L;
+        when(accountService.getAccountsByCustomerId(customerId)).thenReturn(List.of(accountDTO));
 
-        ResponseEntity<TransactionDetails> response = accountController.performTransaction(transactionDTO);
+        ResponseEntity<List<AccountDTO>> response = accountController.getAccountsByCustomerId(customerId);
 
-        assertNotNull(response.getBody(), "La respuesta no debe ser nula");
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-
-        TransactionDetails transactionDetails = response.getBody();
-        assertNotNull(transactionDetails);
-        assertEquals(transactionDTO.getTransactionType().toUpperCase(), transactionDetails.getTransactionType());
-        assertEquals(transactionDTO.getAmount(), transactionDetails.getAmount());
-
-        verify(accountService).performTransaction(
-                transactionDTO.getTransactionType(),
-                transactionDTO.getSourceAccountId(),
-                transactionDTO.getDestinationAccountId(),
-                transactionDTO.getAmount()
+        assertAll(
+                () -> assertNotNull(response),
+                () -> assertEquals(HttpStatus.OK, response.getStatusCode()),
+                () -> assertNotNull(response.getBody()),
+                () -> assertFalse(Objects.requireNonNull(response.getBody()).isEmpty()),
+                () -> assertEquals(accountDTO, Objects.requireNonNull(response.getBody()).get(0))
         );
+        verify(accountService).getAccountsByCustomerId(customerId);
     }
 
 }

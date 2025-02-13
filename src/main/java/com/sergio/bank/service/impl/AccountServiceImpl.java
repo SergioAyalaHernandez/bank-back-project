@@ -94,7 +94,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public AccountDTO getAccountsByCustomerId(Long customerId) {
+    public List<AccountDTO> getAccountsByCustomerId(Long customerId) {
         String url = userMicroServiceUrl + "/customers/" + customerId;
         try {
             ResponseEntity<CustomerDTO> response = restTemplate.getForEntity(url, CustomerDTO.class);
@@ -110,7 +110,7 @@ public class AccountServiceImpl implements AccountService {
             throw new IllegalArgumentException(
                     String.format(MessageConstants.ERROR_ACCOUNTS_NOT_FOUND_BY_CUSTOMER, customerId));
         }
-        return (AccountDTO) accounts.stream()
+        return accounts.stream()
                 .map(accountMapper::toDTO)
                 .collect(Collectors.toList());
     }
