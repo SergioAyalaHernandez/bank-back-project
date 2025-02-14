@@ -6,5 +6,5 @@ RUN gradle clean build -x test
 FROM openjdk:17-jdk
 WORKDIR /app
 COPY --from=build /app/build/libs/*.jar /app/app.jar
-EXPOSE 8080
+EXPOSE 8082
 CMD ["java", "-jar", "/app/app.jar"]
