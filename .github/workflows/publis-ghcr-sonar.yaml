@@ -108,4 +108,4 @@ jobs:
           push: true
           tags: ghcr.io/sergioayalahernandez/ms-bank-h2:${{ env.VERSION }}
           build-args: |
-            PORT=8080
+            PORT=${{ secrets.PORT }}
