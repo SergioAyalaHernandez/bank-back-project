@@ -49,16 +49,16 @@ public class AccountServiceImpl implements AccountService {
 
 
     public AccountDTO createAccount(AccountDTO accountDTO) {
-        String url = userMicroServiceUrl + "/customers/" + accountDTO.getCustomerId();
-
-        try {
-            ResponseEntity<CustomerDTO> response = restTemplate.getForEntity(url, CustomerDTO.class);
-            if (response.getStatusCode() != HttpStatus.OK || response.getBody() == null) {
-                throw new CustomerNotFoundException(accountDTO.getCustomerId());
-            }
-        } catch (HttpClientErrorException.NotFound e) {
-            throw new CustomerNotFoundException(accountDTO.getCustomerId());
-        }
+//        String url = userMicroServiceUrl + "/customers/" + accountDTO.getCustomerId();
+//
+//        try {
+//            ResponseEntity<CustomerDTO> response = restTemplate.getForEntity(url, CustomerDTO.class);
+//            if (response.getStatusCode() != HttpStatus.OK || response.getBody() == null) {
+//                throw new CustomerNotFoundException(accountDTO.getCustomerId());
+//            }
+//        } catch (HttpClientErrorException.NotFound e) {
+//            throw new CustomerNotFoundException(accountDTO.getCustomerId());
+//        }
 
         Long accountNumber = accountDTO.getCustomerId() + LocalDateTime.now().getNano();
         Account account = accountFactory.createAccount(accountDTO.getType(), accountDTO.getCustomerId(), accountDTO.getBalance(),accountNumber);
@@ -95,15 +95,15 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public List<AccountDTO> getAccountsByCustomerId(Long customerId) {
-        String url = userMicroServiceUrl + "/customers/" + customerId;
-        try {
-            ResponseEntity<CustomerDTO> response = restTemplate.getForEntity(url, CustomerDTO.class);
-            if (response.getStatusCode() != HttpStatus.OK || response.getBody() == null) {
-                throw new CustomerNotFoundException(customerId);
-            }
-        } catch (HttpClientErrorException.NotFound e) {
-            throw new CustomerNotFoundException(customerId);
-        }
+//        String url = userMicroServiceUrl + "/customers/" + customerId;
+//        try {
+//            ResponseEntity<CustomerDTO> response = restTemplate.getForEntity(url, CustomerDTO.class);
+//            if (response.getStatusCode() != HttpStatus.OK || response.getBody() == null) {
+//                throw new CustomerNotFoundException(customerId);
+//            }
+//        } catch (HttpClientErrorException.NotFound e) {
+//            throw new CustomerNotFoundException(customerId);
+//        }
 
         List<Account> accounts = accountRepository.findByCustomerId(customerId);
         if (accounts.isEmpty()) {
