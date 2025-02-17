@@ -66,13 +66,8 @@ class AccountServiceImplTest {
 
     @Test
     void createAccount_ShouldCreateAccountSuccessfully() {
-        CustomerDTO customerDTO = new CustomerDTO();
-        customerDTO.setId(accountDTO.getCustomerId());
-        ResponseEntity<CustomerDTO> responseEntity = new ResponseEntity<>(customerDTO, HttpStatus.OK);
-        when(restTemplate.getForEntity(anyString(), eq(CustomerDTO.class))).thenReturn(responseEntity);
-
-        // Simulamos el comportamiento de accountFactory.createAccount(...)
-        when(accountFactory.createAccount(eq(accountDTO.getType()),
+        when(accountFactory.createAccount(
+                eq(accountDTO.getType()),
                 eq(accountDTO.getCustomerId()),
                 eq(accountDTO.getBalance()),
                 anyLong()))
@@ -81,24 +76,22 @@ class AccountServiceImplTest {
                     newAccount.setId(1L);
                     newAccount.setBalance(accountDTO.getBalance());
                     newAccount.setAccountNumber(invocation.getArgument(3));
-                    // Si es necesario, puedes setear otros campos, por ejemplo:
                     newAccount.setCustomerId(accountDTO.getCustomerId());
                     return newAccount;
                 });
 
-        // Simulamos el guardado de la cuenta en el repositorio
-        when(accountRepository.save(any(Account.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(accountRepository.save(any(Account.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
 
-        // Simulamos el mapeo de Account a AccountDTO
-        when(accountMapper.toDTO(any(Account.class))).thenReturn(accountDTO);
+        when(accountMapper.toDTO(any(Account.class)))
+                .thenReturn(accountDTO);
 
-        // Ejecutamos el método a testear
         AccountDTO result = accountService.createAccount(accountDTO);
 
-        // Verificamos los resultados
-        assertNotNull(result);
-        assertEquals(accountDTO, result);
-        verify(messagePublisherService).publishAccountMessage(eq("creación"), anyString(), anyString(), eq(true));
+        assertNotNull(result, "El resultado no debe ser nulo");
+        assertEquals(accountDTO, result, "El DTO devuelto debe coincidir con el esperado");
+        verify(messagePublisherService)
+                .publishAccountMessage(eq("creación"), anyString(), anyString(), eq(true));
     }
 
     @Test
@@ -146,12 +139,6 @@ class AccountServiceImplTest {
     void getAccountsByCustomerId_ShouldReturnAccountsSuccessfully() {
         // Dado un customerId válido
         Long customerId = 123L;
-
-        // Simulamos la respuesta del restTemplate para un cliente existente
-        CustomerDTO customerDTO = new CustomerDTO();
-        customerDTO.setId(customerId);
-        ResponseEntity<CustomerDTO> customerResponse = new ResponseEntity<>(customerDTO, HttpStatus.OK);
-        when(restTemplate.getForEntity(anyString(), eq(CustomerDTO.class))).thenReturn(customerResponse);
 
         // Simulamos que el repositorio retorna una lista con una cuenta
         Account account = new SavingsAccount();
