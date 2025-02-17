@@ -66,6 +66,12 @@ class AccountServiceImplTest {
 
     @Test
     void createAccount_ShouldCreateAccountSuccessfully() {
+        CustomerDTO customerDTO = new CustomerDTO();
+        customerDTO.setId(accountDTO.getCustomerId());
+        ResponseEntity<CustomerDTO> responseEntity = new ResponseEntity<>(customerDTO, HttpStatus.OK);
+        when(restTemplate.getForEntity(anyString(), eq(CustomerDTO.class))).thenReturn(responseEntity);
+
+        // Simulamos el comportamiento de accountFactory.createAccount(...)
         when(accountFactory.createAccount(eq(accountDTO.getType()),
                 eq(accountDTO.getCustomerId()),
                 eq(accountDTO.getBalance()),
@@ -75,13 +81,21 @@ class AccountServiceImplTest {
                     newAccount.setId(1L);
                     newAccount.setBalance(accountDTO.getBalance());
                     newAccount.setAccountNumber(invocation.getArgument(3));
+                    // Si es necesario, puedes setear otros campos, por ejemplo:
+                    newAccount.setCustomerId(accountDTO.getCustomerId());
                     return newAccount;
                 });
+
+        // Simulamos el guardado de la cuenta en el repositorio
         when(accountRepository.save(any(Account.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        // Simulamos el mapeo de Account a AccountDTO
         when(accountMapper.toDTO(any(Account.class))).thenReturn(accountDTO);
 
+        // Ejecutamos el método a testear
         AccountDTO result = accountService.createAccount(accountDTO);
 
+        // Verificamos los resultados
         assertNotNull(result);
         assertEquals(accountDTO, result);
         verify(messagePublisherService).publishAccountMessage(eq("creación"), anyString(), anyString(), eq(true));
@@ -126,6 +140,41 @@ class AccountServiceImplTest {
         verify(accountRepository).findById(accountId);
         verify(accountRepository).save(any(Account.class));
         verify(messagePublisherService).publishAccountMessage(eq("actualización"), anyString(), anyString(), eq(true));
+    }
+
+    @Test
+    void getAccountsByCustomerId_ShouldReturnAccountsSuccessfully() {
+        // Dado un customerId válido
+        Long customerId = 123L;
+
+        // Simulamos la respuesta del restTemplate para un cliente existente
+        CustomerDTO customerDTO = new CustomerDTO();
+        customerDTO.setId(customerId);
+        ResponseEntity<CustomerDTO> customerResponse = new ResponseEntity<>(customerDTO, HttpStatus.OK);
+        when(restTemplate.getForEntity(anyString(), eq(CustomerDTO.class))).thenReturn(customerResponse);
+
+        // Simulamos que el repositorio retorna una lista con una cuenta
+        Account account = new SavingsAccount();
+        account.setId(1L);
+        account.setCustomerId(customerId);
+        account.setBalance(new BigDecimal("1000.00"));
+        List<Account> accountList = List.of(account);
+        when(accountRepository.findByCustomerId(customerId)).thenReturn(accountList);
+
+        // Simulamos el mapeo de Account a AccountDTO
+        AccountDTO accountDTO = new AccountDTO();
+        accountDTO.setCustomerId(customerId);
+        accountDTO.setBalance(new BigDecimal("1000.00"));
+        when(accountMapper.toDTO(account)).thenReturn(accountDTO);
+
+        // Cuando se invoca el método
+        List<AccountDTO> result = accountService.getAccountsByCustomerId(customerId);
+
+        // Entonces verificamos que el resultado no sea nulo, tenga elementos y que contenga el DTO esperado
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+        assertEquals(1, result.size());
+        assertEquals(accountDTO, result.get(0));
     }
 
 }
