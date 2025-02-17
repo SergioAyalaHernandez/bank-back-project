@@ -5,6 +5,8 @@ RUN gradle clean build -x test
 
 FROM openjdk:17-jdk
 WORKDIR /app
+
+ENV PORT=${PORT}
 COPY --from=build /app/build/libs/*.jar /app/app.jar
-EXPOSE 8082
+EXPOSE ${PORT}
 CMD ["java", "-jar", "/app/app.jar"]
